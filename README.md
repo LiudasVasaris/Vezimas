@@ -1,4 +1,4 @@
-# Vezimas
+# Vežimas
 Kortų žaidimas vežimas, jo suprogramavimas, bei automatizuotas solveris
 
 Šiame projekte sukursiu kortų žaidimą [Vežimas](https://lt.wikipedia.org/wiki/Ve%C5%BEimas_(kort%C5%B3_%C5%BEaidimas "Kortų žaidimas Vežimas - wikipedia")
