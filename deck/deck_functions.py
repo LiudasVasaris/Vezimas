@@ -2,7 +2,7 @@ from typing import Iterable, List
 
 from numpy import random
 
-from card_encoding import encoded_cards, playing_cards, suits
+from deck.card_encoding import playing_cards, suits
 
 
 def visualise_card(card: tuple) -> str:
