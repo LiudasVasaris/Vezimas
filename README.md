@@ -10,4 +10,16 @@ Egzistuoja senas posakis, kad kalėjime žmonės žaidžiantys vežimą pasidali
 
 Žaidimas žaidžiamas kortų kalade nuo 9 iki Tūzų, be ypatingų kortų (jokerių). Žaidėjų kiekis įprastai būna 4, tačiau galima žaisti ir dviese ar tryse. 
 
-Žaidimo pradžioje kortos išdalinamos visiem žaidėjams po lygiai, ir kiekvienam žaidėjui priskiriami koziriai (prieš išdalinant kortas arba (kiemo taisyklė) Kryžiai (♣️) priskiriami tam, kas turi kryžių damą(Q♣️) ). Koziriu eiliškumas tarp žaidėjų turi būti išlaikomas Kryžiai -> Lapai -> Čirvai -> Būgnai.
+Žaidimo pradžioje kortos išdalinamos visiem žaidėjams po lygiai, ir kiekvienam žaidėjui priskiriami koziriai (prieš išdalinant kortas arba (kiemo taisyklė) Kryžiai♣️ priskiriami tam, kas turi kryžių damą Q♣️). Koziriu eiliškumas tarp žaidėjų turi būti išlaikomas Kryžiai♣️ -> Lapai♠ -> Čirvai♥ -> Būgnai♦.
+
+Prieš partijai prasidedant, kiekvienas žaidėjas atiduoda 9-akes kortas kozirio savininkui.
+Žaidėjęs gavęs Kryžius♣️ pradeda pirmąją partiją, vėliau partiją pradeda žaidėjęs einantis eiliškai po paskutinio praleimėjusio. Pradėti gali bet kokia korta.
+
+Antrasis žaidėjęs, turi padėti dvi kortas.
+1. Nukirsti esančią kortą
+
+Nukirsti kortą galima su aukštesne to pačio kozirio korta arba bet kokia savo kozirio korta. Išimtis galioja dviem atvejais:
+a. Kai korta kurią turi nukirsti yra tavo koziris, turi ją nukirsti aukštesniu savo koziriu.
+b. Kai korta kurią turi nukirsti yra po tavęs einančio žaidėjo koziris, ją gali nukirsti tik savu kozirius
+2. Paduoti kortą, kurią turės nukirsti kitas žaidėjas eilėje.
+
