@@ -19,7 +19,18 @@ Antrasis žaidėjęs, turi padėti dvi kortas.
 1. Nukirsti esančią kortą
 
 Nukirsti kortą galima su aukštesne to pačio kozirio korta arba bet kokia savo kozirio korta. Išimtis galioja dviem atvejais:
-a. Kai korta kurią turi nukirsti yra tavo koziris, turi ją nukirsti aukštesniu savo koziriu.
-b. Kai korta kurią turi nukirsti yra po tavęs einančio žaidėjo koziris, ją gali nukirsti tik savu kozirius
+
+    a. Kai korta kurią turi nukirsti yra tavo koziris, turi ją nukirsti aukštesniu savo koziriu.
+    b. Kai korta kurią turi nukirsti yra po tavęs einančio žaidėjo koziris, ją gali nukirsti tik savu kozirius
+
+
 2. Paduoti kortą, kurią turės nukirsti kitas žaidėjas eilėje.
+
+Paduoti kortą, kurią turi kirsti kitas žaidėjas galima bet kokią, tačiau dažniausiai norima paprašyti taip, kad jam reikėtų naudoti savus kozirius
+
+
+Jeigu žaidėjas negali arba nenori atsikirsti, jis gali visas kortas kurios buvo padėtos iki jo pasiimti į ranką (namo). Tuomet po jo einantis žaidėjas pratęsia žaidimą padėdamas vieną kortą.
+
+Paskutinis žaidėjęs likęs su kortomis pralaimi partiją ir gauna raidę V. Vežimas žaidžiamas kol vienas žaidėjas surenka visas raides V E Ž I M A S
+
 
