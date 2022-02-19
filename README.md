@@ -13,9 +13,9 @@ Egzistuoja senas posakis, kad kalėjime žmonės žaidžiantys vežimą pasidali
 Žaidimo pradžioje kortos išdalinamos visiem žaidėjams po lygiai, ir kiekvienam žaidėjui priskiriami koziriai (prieš išdalinant kortas arba (kiemo taisyklė) Kryžiai♣️ priskiriami tam, kas turi kryžių damą Q♣️). Koziriu eiliškumas tarp žaidėjų turi būti išlaikomas Kryžiai♣️ -> Lapai♠ -> Čirvai♥ -> Būgnai♦.
 
 Prieš partijai prasidedant, kiekvienas žaidėjas atiduoda 9-akes kortas kozirio savininkui.
-Žaidėjęs gavęs Kryžius♣️ pradeda pirmąją partiją, vėliau partiją pradeda žaidėjęs einantis eiliškai po paskutinio praleimėjusio. Pradėti gali bet kokia korta.
+Žaidėjas gavęs Kryžius♣️ pradeda pirmąją partiją, vėliau partiją pradeda žaidėjęs einantis eiliškai po paskutinio praleimėjusio. Pradėti gali bet kokia korta.
 
-Antrasis žaidėjęs, turi padėti dvi kortas.
+Antrasis žaidėjas, turi padėti dvi kortas.
 1. Nukirsti esančią kortą
 
 Nukirsti kortą galima su aukštesne to pačio kozirio korta arba bet kokia savo kozirio korta. Išimtis galioja dviem atvejais:
