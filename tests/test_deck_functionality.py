@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from deck_functions import visualise_card, visualise_set_of_cards, Deck
+from deck.deck_functions import visualise_card, visualise_set_of_cards, Deck
 
 card2 = (2, 2)
 card3 = (3, 3)
