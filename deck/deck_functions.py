@@ -1,6 +1,6 @@
 from typing import Iterable, List
 
-from numpy.random import shuffle
+from numpy import random
 
 from card_encoding import encoded_cards, playing_cards, suits
 
@@ -35,19 +35,20 @@ def visualise_set_of_cards(card_list: Iterable, sort_cards: bool = False) -> str
 
 
 class Deck:
-    """Represents a standard deck of cards built using Constants from card_encoding"""
+    """Represents a standard deck of cards built using Constants from card_encoding
+    Args:
+        card_list: list of cards for deck to consist of"""
 
-    def __init__(self):
-        self.deck = list(encoded_cards)
+    def __init__(self, card_list: List[tuple]):
+        self.deck = card_list
 
     def __str__(self):
         return str(self.deck)
 
     def shuffle(self):
         """Shuffles deck"""
-        shuffle(self.deck)
+        random.shuffle(self.deck)
 
     def deal(self, no_cards: int = 1) -> List[tuple]:
         """Deals no_cards of cards by removing them from the deck"""
         return [self.deck.pop() for _ in range(no_cards)]
-
