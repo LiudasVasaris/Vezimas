@@ -26,7 +26,7 @@ Nukirsti kortą galima su aukštesne to pačio kozirio korta arba bet kokia savo
 
 2. Paduoti kortą, kurią turės nukirsti kitas žaidėjas eilėje.
 
-Paduoti kortą, kurią turi kirsti kitas žaidėjas galima bet kokią, tačiau dažniausiai norima paprašyti taip, kad jam reikėtų naudoti savus kozirius
+Paduoti kortą, kurią turi kirsti kitas žaidėjas galima bet kokią, tačiau dažniausiai norima padėti taip, kad jam reikėtų naudoti savus kozirius
 
 
 Jeigu žaidėjas negali arba nenori atsikirsti, jis gali visas kortas kurios buvo padėtos iki jo pasiimti į ranką (namo). Tuomet po jo einantis žaidėjas pratęsia žaidimą padėdamas vieną kortą.
