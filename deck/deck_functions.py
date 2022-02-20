@@ -42,7 +42,9 @@ class Deck:
         card_list: list of cards for deck to consist of"""
 
     def __init__(self, card_list: List[card_type]):
-        self.deck = card_list
+        # Copy the list, to avoid mutating the wrong list by accident
+        self.deck = card_list.copy()
+        self.init_deck = card_list.copy()
 
     def __str__(self):
         return str(self.deck)
@@ -57,3 +59,7 @@ class Deck:
     def deal(self, no_cards: int = 1) -> List[card_type]:
         """Deals no_cards of cards by removing them from the deck"""
         return [self.deck.pop() for _ in range(no_cards)]
+
+    def reset_deck(self):
+        """Resets deck to contain all cards"""
+        self.deck = self.init_deck.copy()
