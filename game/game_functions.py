@@ -93,6 +93,10 @@ class Vezimas:
         for player in self.players:
             if player.has_card(QUEEN_OF_SPADES):
                 player.suit = SUITS.keys()[0]  # First suit is spades
+                next_player = player.next_player
 
                 for set_suit in SUITS.keys()[1:]:
-                    player.next_player.suit = set_suit
+                    if next_player.suit:
+                        break
+                    next_player.suit = set_suit
+                    next_player = player.next_player

@@ -1,7 +1,7 @@
 import itertools
 from typing import Tuple
 
-SUITS = {1: "♣️", 2: "♦️", 3: "♥️", 4: "♠️"}
+SUITS = {1: "♣️", 2: "♠️", 3: "♥️", 4: "♦️"}
 
 # Ace gets pushed to the end to indicate it being higher
 PLAYING_CARDS = {
