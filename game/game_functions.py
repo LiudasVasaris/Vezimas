@@ -1,7 +1,8 @@
 from typing import Optional, List
 
-from deck.card_encoding import card_type
+from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS
 from deck.deck_functions import Deck
+from itertools import cycle
 
 
 class Player:
@@ -11,9 +12,12 @@ class Player:
     """
 
     def __init__(self, name: str):
-        self.name = name
-        self.score = []
-        self.hand = []
+        self.name: str = name
+
+        self.score: List[str] = []
+        self.hand: List[card_type] = []
+        self.next_player: Optional[Player] = None
+        self.suit: Optional[int]
 
     def add_cards(self, list_of_cards: List[card_type]):
         """Method to add cards to the players hand"""
@@ -37,6 +41,10 @@ class Player:
 
     def has_card(self, card: card_type):
         return card in self.hand
+
+    # Interesting case of Forward reference https://www.python.org/dev/peps/pep-0484/#forward-references
+    def add_next_player(self, player: "Player"):
+        self.next_player = player
 
 
 class Vezimas:
@@ -62,12 +70,29 @@ class Vezimas:
             f"Player {i}" for i in range(1, player_count + 1)
         ]
 
-        self.players = {name: Player(name) for name in self.player_names}
+        self.players = [Player(name) for name in self.player_names]
+
+        # removes first element and adds it back again, essentially rotating list by one element
+        shifted_players_list = self.players.copy()
+        shifted_players_list.append(shifted_players_list.pop(0))
+
+        _ = [
+            player.add_next_player(next_player)
+            for player, next_player in zip(self.players, shifted_players_list)
+        ]
 
     def deal_cards(self):
+        """Method that shuffles and deals cards to the players"""
         cards_per_player = int(len(self.deck) / len(self.players))
-        for name, player in self.players.items():
+        self.deck.shuffle()
+        for player in self.players:
             player.add_cards(self.deck.deal(cards_per_player))
 
     def set_trumps(self):
-        pass
+        """Setting trumps for the players using Queen of spades start of game method"""
+        for player in self.players:
+            if player.has_card(QUEEN_OF_SPADES):
+                player.suit = SUITS.keys()[0]  # First suit is spades
+
+                for set_suit in SUITS.keys()[1:]:
+                    player.next_player.suit = set_suit

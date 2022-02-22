@@ -2,7 +2,7 @@ from typing import Iterable, List
 
 from numpy import random
 
-from deck.card_encoding import playing_cards, suits, card_type
+from deck.card_encoding import PLAYING_CARDS, SUITS, card_type
 
 
 def visualise_card(card: card_type) -> str:
@@ -13,7 +13,7 @@ def visualise_card(card: card_type) -> str:
     Returns:
         String representation of a card with emoji
     """
-    return f"{playing_cards[card[0]]}{suits[card[1]]}"
+    return f"{PLAYING_CARDS[card[0]]}{SUITS[card[1]]}"
 
 
 def visualise_set_of_cards(
