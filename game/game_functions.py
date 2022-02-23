@@ -140,3 +140,8 @@ class Vezimas:
             player.remove_cards(NINES)
             nine_to_add = (9, player.suit)
             player.add_cards([nine_to_add])
+
+
+class VezimasSubgame:
+    def __init__(self):
+        main_game: Vezimas
