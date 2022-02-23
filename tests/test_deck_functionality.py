@@ -4,12 +4,12 @@ import pytest
 
 from deck.deck_functions import visualise_card, visualise_set_of_cards, Deck
 
-card2 = (2, 2)
-card3 = (3, 3)
-bad_card = (1, 2, 3)
+card2 = (9, 2)
+card3 = (10, 3)
+bad_card = (99, 99)
 
-rep2 = "2♦️"
-rep3 = "3♥️"
+rep2 = "9♦️"
+rep3 = "10♥️"
 
 
 def test_visualise_card_with_correct_input_visualisation_is_returned():
