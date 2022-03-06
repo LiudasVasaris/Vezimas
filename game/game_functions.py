@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS
+from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
 from deck.deck_functions import Deck
 from itertools import cycle
 
@@ -17,16 +17,32 @@ class Player:
         self.score: List[str] = []
         self.hand: List[card_type] = []
         self.next_player: Optional[Player] = None
-        self.suit: Optional[int]
+        self.suit: Optional[int] = None
 
     def add_cards(self, list_of_cards: List[card_type]):
-        """Method to add cards to the players hand"""
+        """Method to add cards to the players hand
+        Args:
+            list_of_cards: list of tuple that represents a card to add to players hand
+        """
         self.hand = self.hand + list_of_cards
+
+    def remove_cards(self, list_of_cards: List[card_type]):
+        """Method to remove cards to the players hand
+        Args:
+            list_of_cards: list of tuple that represents a card to remove from players hand
+        """
+        [self.hand.remove(card) for card in list_of_cards if card in self.hand]
 
     def play_cards(
         self, beat_card: Optional[card_type], play_card: Optional[card_type]
     ) -> List[card_type]:
-        """Method to play cards from players hand"""
+        """Method to play cards from players hand
+        Args:
+            beat_card: tuple that represents a card placed to beat the top card
+            play_card: tuple that represents a card placed to play after beating
+
+        Returns:
+            List of cards to be played"""
 
         cards_to_stack = []
 
@@ -40,10 +56,22 @@ class Player:
         return cards_to_stack
 
     def has_card(self, card: card_type):
+        """Method to check if a player has specified card in hand
+        Args:
+            card: tuple that represents a card to check if player has
+
+        Returns:
+            Boolean flag if the card is in hand
+        """
+
         return card in self.hand
 
     # Interesting case of Forward reference https://www.python.org/dev/peps/pep-0484/#forward-references
     def add_next_player(self, player: "Player"):
+        """Method to add a reference to a player playing after current player
+        Args:
+            player: Next player in line to play
+        """
         self.next_player = player
 
 
@@ -67,7 +95,7 @@ class Vezimas:
             )
 
         self.player_names = player_names or [
-            f"Player {i}" for i in range(1, player_count + 1)
+            f"Player {i}" for i in range(0, player_count)
         ]
 
         self.players = [Player(name) for name in self.player_names]
@@ -76,7 +104,7 @@ class Vezimas:
         shifted_players_list = self.players.copy()
         shifted_players_list.append(shifted_players_list.pop(0))
 
-        _ = [
+        [
             player.add_next_player(next_player)
             for player, next_player in zip(self.players, shifted_players_list)
         ]
@@ -89,14 +117,31 @@ class Vezimas:
             player.add_cards(self.deck.deal(cards_per_player))
 
     def set_trumps(self):
-        """Setting trumps for the players using Queen of spades start of game method"""
+        """Setting trumps for the players using Queen of spades start of game method
+
+        Returns:
+            Player who got the Queen of spades (to start off the first game)"""
+        suit_list = list(SUITS.keys())
         for player in self.players:
             if player.has_card(QUEEN_OF_SPADES):
-                player.suit = SUITS.keys()[0]  # First suit is spades
+                player.suit = suit_list[0]  # First suit is spades
                 next_player = player.next_player
 
-                for set_suit in SUITS.keys()[1:]:
+                for set_suit in suit_list[1:]:
                     if next_player.suit:
                         break
                     next_player.suit = set_suit
-                    next_player = player.next_player
+                    next_player = next_player.next_player
+                return player
+
+    def share_nines(self):
+        """Method for `returning` each nine card to its suits owner"""
+        for player in self.players:
+            player.remove_cards(NINES)
+            nine_to_add = (9, player.suit)
+            player.add_cards([nine_to_add])
+
+
+class VezimasSubgame:
+    def __init__(self):
+        main_game: Vezimas

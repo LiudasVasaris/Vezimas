@@ -15,5 +15,6 @@ PLAYING_CARDS = {
 
 ENCODED_CARDS = list(itertools.product(PLAYING_CARDS, SUITS))
 QUEEN_OF_SPADES = (12, 1)
+NINES = [(9, 1), (9, 2), (9, 3), (9, 4)]
 
 card_type = Tuple[int, int]
