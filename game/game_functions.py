@@ -1,7 +1,7 @@
 from typing import Optional, List, Any
 
 from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
-from deck.deck_functions import Deck
+from deck.deck_functions import Deck, visualise_set_of_cards
 from itertools import cycle
 
 
@@ -196,9 +196,27 @@ class VezimasSubgame:
             _player_to_add = _player_to_add.next_player
 
         self.player_cycle = MyCycle(_player_list)
+        self.card_stack = []
 
+    # TODO: where should this go
+    @staticmethod
+    def card_play_input(player: Player) -> card_type:
+        """Visualises all cards and asks for a card to play
+        Args:
+            player: player whose cards to show
 
-    def first_play(self):
-        pass
+        Returns:
+            card selected to play"""
+        visualise_set_of_cards(player.hand)
+        card_idx = None
 
+        while card_idx is None:
+            try:
+                card_idx = int(input("ID of card to play: "))
+                if card_idx not in range(len(player.hand)):
+                    raise ValueError("Incorrect ID of card")
+            except ValueError:
+                print("Try again")
 
+        return player.hand[card_idx]
+    
