@@ -33,7 +33,9 @@ def visualise_set_of_cards(
     else:
         card_list_to_viz = card_list
 
-    return str([visualise_card(card) for card in card_list_to_viz])
+    return str(
+        [f"{idx}: {visualise_card(card)}" for idx, card in enumerate(card_list_to_viz)]
+    )
 
 
 class Deck:

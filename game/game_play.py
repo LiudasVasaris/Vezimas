@@ -8,6 +8,8 @@ deck = Deck(ENCODED_CARDS)
 game = Vezimas(deck,4)
 game.deal_cards()
 game.set_trumps()
+game.share_nines()
+
 
 
 print("stop")

@@ -4,7 +4,7 @@ import pytest
 
 from deck.deck_functions import visualise_card, visualise_set_of_cards, Deck
 
-card2 = (9, 2)
+card2 = (9, 4)
 card3 = (10, 3)
 bad_card = (99, 99)
 
@@ -22,7 +22,7 @@ def test_visualise_card_with_incorrect_input_error_is_raised():
 
 
 def test_visualise_set_card_with_correct_input_visualisation_is_returned():
-    assert visualise_set_of_cards([card2, card3]) == str([rep2, rep3])
+    assert visualise_set_of_cards([card2, card3]) == f"['0: {rep2}', '1: {rep3}']"
 
 
 def test_visualise_set_card_with_incorrect_input_error_is_raised():

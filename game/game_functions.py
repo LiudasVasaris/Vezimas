@@ -1,8 +1,32 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
-from deck.deck_functions import Deck
+from deck.deck_functions import Deck, visualise_set_of_cards
 from itertools import cycle
+
+
+class MyCycle:
+    """Object that allows to cycle over given list and remove elements from it"""
+
+    def __init__(self, lst: List[Any]):
+        self.list = lst
+
+    def __iter__(self):
+        while True:
+            items_left = False
+            for x in self.list:
+                if x is not None:
+                    items_left = True
+                    yield x
+            if not items_left:
+                return
+
+    def remove(self, e: Any):
+        """Method to remove element from list
+        Args:
+            e: element to remove from list
+        """
+        self.list[self.list.index(e)] = None
 
 
 class Player:
@@ -18,6 +42,7 @@ class Player:
         self.hand: List[card_type] = []
         self.next_player: Optional[Player] = None
         self.suit: Optional[int] = None
+        self.starting_player: bool = False
 
     def add_cards(self, list_of_cards: List[card_type]):
         """Method to add cards to the players hand
@@ -89,6 +114,8 @@ class Vezimas:
         player_names: Optional[List[str]] = None,
     ):
         self.deck = deck_of_cards
+        self.player_count = player_count
+
         if player_names and player_count != len(player_names):
             raise ValueError(
                 f"Incorrect number of names provided, expected {player_count}, got {len(player_names)}"
@@ -111,7 +138,7 @@ class Vezimas:
 
     def deal_cards(self):
         """Method that shuffles and deals cards to the players"""
-        cards_per_player = int(len(self.deck) / len(self.players))
+        cards_per_player = int(len(self.deck) / self.player_count)
         self.deck.shuffle()
         for player in self.players:
             player.add_cards(self.deck.deal(cards_per_player))
@@ -125,6 +152,7 @@ class Vezimas:
         for player in self.players:
             if player.has_card(QUEEN_OF_SPADES):
                 player.suit = suit_list[0]  # First suit is spades
+                player.starting_player = True  #  Queen of spades starts game
                 next_player = player.next_player
 
                 for set_suit in suit_list[1:]:
@@ -141,7 +169,54 @@ class Vezimas:
             nine_to_add = (9, player.suit)
             player.add_cards([nine_to_add])
 
+    def remove_starting_player_flags(self):
+        """Method for resetting starting player flag"""
+        for player in self.players:
+            player.starting_player = False
+
+    def get_starting_player(self):
+        """Method for retrieving starting player"""
+        for player in self.players:
+            if player.starting_player:
+                return player
+        raise ValueError("Starting player not set")
+
 
 class VezimasSubgame:
-    def __init__(self):
-        main_game: Vezimas
+    """Class of playing the trick/subgame of Vezimas"""
+
+    def __init__(self, main_game: Vezimas):
+        self.main_game = main_game
+
+        # creates cycle list starting from player who has its starting player flag set
+        _player_to_add = self.main_game.get_starting_player()
+        _player_list = []
+        for i in range(self.main_game.player_count):
+            _player_list.append(_player_to_add)
+            _player_to_add = _player_to_add.next_player
+
+        self.player_cycle = MyCycle(_player_list)
+        self.card_stack = []
+
+    # TODO: where should this go
+    @staticmethod
+    def card_play_input(player: Player) -> card_type:
+        """Visualises all cards and asks for a card to play
+        Args:
+            player: player whose cards to show
+
+        Returns:
+            card selected to play"""
+        visualise_set_of_cards(player.hand)
+        card_idx = None
+
+        while card_idx is None:
+            try:
+                card_idx = int(input("ID of card to play: "))
+                if card_idx not in range(len(player.hand)):
+                    raise ValueError("Incorrect ID of card")
+            except ValueError:
+                print("Try again")
+
+        return player.hand[card_idx]
+    
