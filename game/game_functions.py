@@ -3,101 +3,9 @@ from typing import Optional, List, Any
 from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
 from deck.deck_functions import Deck, visualise_set_of_cards
 from itertools import cycle
+import logging
 
-
-class MyCycle:
-    """Object that allows to cycle over given list and remove elements from it"""
-
-    def __init__(self, lst: List[Any]):
-        self.list = lst
-
-    def __iter__(self):
-        while True:
-            items_left = False
-            for x in self.list:
-                if x is not None:
-                    items_left = True
-                    yield x
-            if not items_left:
-                return
-
-    def remove(self, e: Any):
-        """Method to remove element from list
-        Args:
-            e: element to remove from list
-        """
-        self.list[self.list.index(e)] = None
-
-
-class Player:
-    """Represents player for the game, containing his name, score and current hand
-    Args:
-        name: name of the player
-    """
-
-    def __init__(self, name: str):
-        self.name: str = name
-
-        self.score: List[str] = []
-        self.hand: List[card_type] = []
-        self.next_player: Optional[Player] = None
-        self.suit: Optional[int] = None
-        self.starting_player: bool = False
-
-    def add_cards(self, list_of_cards: List[card_type]):
-        """Method to add cards to the players hand
-        Args:
-            list_of_cards: list of tuple that represents a card to add to players hand
-        """
-        self.hand = self.hand + list_of_cards
-
-    def remove_cards(self, list_of_cards: List[card_type]):
-        """Method to remove cards to the players hand
-        Args:
-            list_of_cards: list of tuple that represents a card to remove from players hand
-        """
-        [self.hand.remove(card) for card in list_of_cards if card in self.hand]
-
-    def play_cards(
-        self, beat_card: Optional[card_type], play_card: Optional[card_type]
-    ) -> List[card_type]:
-        """Method to play cards from players hand
-        Args:
-            beat_card: tuple that represents a card placed to beat the top card
-            play_card: tuple that represents a card placed to play after beating
-
-        Returns:
-            List of cards to be played"""
-
-        cards_to_stack = []
-
-        if beat_card:
-            self.hand.remove(beat_card)
-            cards_to_stack.append(beat_card)
-        if play_card:
-            self.hand.remove(play_card)
-            cards_to_stack.append(play_card)
-
-        return cards_to_stack
-
-    def has_card(self, card: card_type):
-        """Method to check if a player has specified card in hand
-        Args:
-            card: tuple that represents a card to check if player has
-
-        Returns:
-            Boolean flag if the card is in hand
-        """
-
-        return card in self.hand
-
-    # Interesting case of Forward reference https://www.python.org/dev/peps/pep-0484/#forward-references
-    def add_next_player(self, player: "Player"):
-        """Method to add a reference to a player playing after current player
-        Args:
-            player: Next player in line to play
-        """
-        self.next_player = player
+from player.player_functions import Player, MyCycle, card_play_input
 
 
 class Vezimas:
@@ -198,25 +106,21 @@ class VezimasSubgame:
         self.player_cycle = MyCycle(_player_list)
         self.card_stack = []
 
-    # TODO: where should this go
-    @staticmethod
-    def card_play_input(player: Player) -> card_type:
-        """Visualises all cards and asks for a card to play
-        Args:
-            player: player whose cards to show
+    def start_game(self):
+        """Method for starting the trick of Vezimas"""
 
-        Returns:
-            card selected to play"""
-        visualise_set_of_cards(player.hand)
-        card_idx = None
+        for player_turn in self.player_cycle:
 
-        while card_idx is None:
-            try:
-                card_idx = int(input("ID of card to play: "))
-                if card_idx not in range(len(player.hand)):
-                    raise ValueError("Incorrect ID of card")
-            except ValueError:
-                print("Try again")
+            if not self.card_stack:  # If card stack is empty play only one(any) card
+                card_to_play_first = card_play_input(player_turn)
+                player_turn.remove_cards([card_to_play_first])
+                self.card_stack.append(card_to_play_first)
 
-        return player.hand[card_idx]
-    
+            else:  # If card stack is not empty play 2 cards
+                card_to_beat = card_play_input(player_turn)
+                player_turn.remove_cards([card_to_beat])
+                self.card_stack.append(card_to_beat)
+
+                card_to_play = card_play_input(player_turn)
+                player_turn.remove_cards([card_to_play])
+                self.card_stack.append(card_to_play)
