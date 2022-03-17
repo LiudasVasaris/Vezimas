@@ -3,6 +3,10 @@ from typing import Optional, List, Any
 from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
 from deck.deck_functions import Deck, visualise_set_of_cards
 from itertools import cycle
+import logging
+
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
 
 
 class MyCycle:
@@ -207,7 +211,7 @@ class VezimasSubgame:
 
         Returns:
             card selected to play"""
-        visualise_set_of_cards(player.hand)
+        LOGGER.info(visualise_set_of_cards(player.hand))
         card_idx = None
 
         while card_idx is None:
@@ -219,4 +223,3 @@ class VezimasSubgame:
                 print("Try again")
 
         return player.hand[card_idx]
-    
