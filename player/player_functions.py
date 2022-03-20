@@ -13,7 +13,7 @@ class Player:
     def __init__(self, name: str):
         self.name: str = name
 
-        self.score: List[str] = []
+        self.score: int = 0
         self.hand: List[card_type] = []
         self.next_player: Optional[Player] = None
         self.suit: Optional[int] = None
@@ -77,23 +77,27 @@ class MyCycle:
         self.list[self.list.index(e)] = None
 
 
-def card_play_input(player: Player) -> card_type:
+def card_play_input(player: Player, visualise: bool = True) -> card_type:
     """Visualises all cards and asks for a card to play
     Args:
         player: player whose cards to show
+        visualise: flag to set if cards should be printed
 
     Returns:
         card selected to play"""
-    print(visualise_set_of_cards(player.hand, sort_cards=True))
+    if visualise:
+        print(visualise_set_of_cards(player.hand, sort_cards=True))
+
     card_idx = None
 
     while card_idx is None:
         try:
             card_idx = int(input("ID of card to play: "))
-            if card_idx not in range(len(player.hand)):
+            if card_idx not in list(range(len(player.hand))):
                 raise ValueError("Incorrect ID of card")
         except ValueError:
-            print("Try again")
+            card_idx = None
+            print("Bad last input, Try again")
 
     return player.hand[card_idx]
 
