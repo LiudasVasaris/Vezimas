@@ -1,7 +1,6 @@
 from typing import List, Any, Optional
 
-from deck.card_encoding import card_type
-from deck.deck_functions import visualise_set_of_cards
+from deck.deck_functions import visualise_set_of_cards, Card
 
 
 class Player:
@@ -14,26 +13,26 @@ class Player:
         self.name: str = name
 
         self.score: int = 0
-        self.hand: List[card_type] = []
+        self.hand: List[Card] = []
         self.next_player: Optional[Player] = None
         self.suit: Optional[int] = None
         self.starting_player: bool = False
 
-    def add_cards(self, list_of_cards: List[card_type]):
+    def add_cards(self, list_of_cards: List[Card]):
         """Method to add cards to the players hand
         Args:
             list_of_cards: list of tuple that represents a card to add to players hand
         """
         self.hand = self.hand + list_of_cards
 
-    def remove_cards(self, list_of_cards: List[card_type]):
+    def remove_cards(self, list_of_cards: List[Card]):
         """Method to remove cards to the players hand
         Args:
             list_of_cards: list of tuple that represents a card to remove from players hand
         """
         [self.hand.remove(card) for card in list_of_cards if card in self.hand]
 
-    def has_card(self, card: card_type):
+    def has_card(self, card: Card):
         """Method to check if a player has specified card in hand
         Args:
             card: tuple that represents a card to check if player has
@@ -51,6 +50,10 @@ class Player:
             player: Next player in line to play
         """
         self.next_player = player
+
+    def sort_cards(self):
+        """Method for sorting player cards"""
+        self.hand = sorted(self.hand, key=lambda card: (card.suit, card.face))
 
 
 class MyCycle:
@@ -77,7 +80,7 @@ class MyCycle:
         self.list[self.list.index(e)] = None
 
 
-def card_play_input(player: Player, visualise: bool = True) -> card_type:
+def card_play_input(player: Player, visualise: bool = True) -> Card:
     """Visualises all cards and asks for a card to play
     Args:
         player: player whose cards to show
@@ -86,7 +89,7 @@ def card_play_input(player: Player, visualise: bool = True) -> card_type:
     Returns:
         card selected to play"""
     if visualise:
-        print(visualise_set_of_cards(player.hand, sort_cards=True))
+        print(visualise_set_of_cards(player.hand))
 
     card_idx = None
 

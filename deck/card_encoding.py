@@ -1,7 +1,4 @@
-import itertools
-from typing import Tuple
-
-SUITS = {1: "♣️", 2: "♠️", 3: "♥️", 4: "♦️"}
+SUITS = {1: "♣", 2: "♠", 3: "♥", 4: "♦"}
 
 # Ace gets pushed to the end to indicate it being higher
 PLAYING_CARDS = {
@@ -12,9 +9,3 @@ PLAYING_CARDS = {
     13: "K",
     14: "A",
 }
-
-ENCODED_CARDS = list(itertools.product(PLAYING_CARDS, SUITS))
-QUEEN_OF_SPADES = (12, 1)
-NINES = [(9, 1), (9, 2), (9, 3), (9, 4)]
-
-card_type = Tuple[int, int]

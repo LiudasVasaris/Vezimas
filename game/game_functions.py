@@ -1,10 +1,8 @@
-from typing import Optional, List, Any
+import os
+from typing import Optional, List
 
-from deck.card_encoding import card_type, QUEEN_OF_SPADES, SUITS, NINES
-from deck.deck_functions import Deck, visualise_set_of_cards
-from itertools import cycle
-import logging
-
+from deck.card_encoding import SUITS
+from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
 from player.player_functions import Player, MyCycle, card_play_input
 
 
@@ -74,7 +72,7 @@ class Vezimas:
         """Method for `returning` each nine card to its suits owner"""
         for player in self.players:
             player.remove_cards(NINES)
-            nine_to_add = (9, player.suit)
+            nine_to_add = Card((9, player.suit))
             player.add_cards([nine_to_add])
 
     def remove_starting_player_flags(self):
@@ -88,6 +86,55 @@ class Vezimas:
             if player.starting_player:
                 return player
         raise ValueError("Starting player not set")
+
+    def sort_cards(self):
+        """Method for sorting cards of each player"""
+        [player.sort_cards() for player in self.players]
+
+
+def check_play_validity(
+    card_stack: List[Card], card_to_beat: Card, player: Player
+) -> bool:
+    """Checks if played card obeys the game rules
+    Args:
+        card_stack: stack of cards already played
+        card_to_beat: card played to beat the stack
+        player: player that is making the play
+
+    Returns: True if play is correct, False otherwise
+    """
+    last_card = card_stack[-1]
+    next_player_suit = None
+    next_player_to_play = player.next_player
+
+    while next_player_suit is None:
+        if next_player_to_play.hand:
+            next_player_suit = next_player_to_play.suit
+        else:
+            next_player_to_play = next_player_to_play.next_player
+
+    if last_card.suit == player.suit and card_to_beat.suit != player.suit:
+        print("Card suit is incorrect")
+        return False
+
+    if last_card.suit == player.suit and last_card > card_to_beat:
+        print("Card face value too low")
+        return False
+
+    if last_card.suit == next_player_suit and card_to_beat.suit != player.suit:
+        print("Card suit is incorrect")
+        return False
+
+    if last_card.suit != next_player_suit and last_card.suit != player.suit:
+        if card_to_beat.suit != player.suit:
+            if card_to_beat.suit != last_card.suit:
+                print("Card suit is incorrect")
+                return False
+            if last_card > card_to_beat:
+                print("Card face value too low")
+                return False
+
+    return True
 
 
 class VezimasSubgame:
@@ -110,11 +157,13 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
+            os.system("cls")
             print(f"{player_turn.name} select card(s) to play:")
 
             # If card stack is empty or single card in hand play only one card
             if not self.card_stack or len(player_turn.hand) == 1:
                 card_to_play_first = card_play_input(player_turn)
+
                 player_turn.remove_cards([card_to_play_first])
                 self.card_stack.append(card_to_play_first)
 
@@ -125,7 +174,7 @@ class VezimasSubgame:
                     card_to_play = card_play_input(player_turn, visualise=False)
                     if card_to_beat == card_to_play:
                         print("Cannot play same card twice")
-                    else:
+                    if check_play_validity(self.card_stack, card_to_beat, player_turn):
                         break
 
                 player_turn.remove_cards([card_to_beat])
