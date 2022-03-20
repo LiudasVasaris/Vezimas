@@ -110,17 +110,41 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
+            print(f"{player_turn.name} select card(s) to play:")
 
-            if not self.card_stack:  # If card stack is empty play only one(any) card
+            # If card stack is empty or single card in hand play only one card
+            if not self.card_stack or len(player_turn.hand) == 1:
                 card_to_play_first = card_play_input(player_turn)
                 player_turn.remove_cards([card_to_play_first])
                 self.card_stack.append(card_to_play_first)
 
-            else:  # If card stack is not empty play 2 cards
-                card_to_beat = card_play_input(player_turn)
-                player_turn.remove_cards([card_to_beat])
-                self.card_stack.append(card_to_beat)
+            # If card stack is not empty play 2 cards
+            else:
+                while True:
+                    card_to_beat = card_play_input(player_turn)
+                    card_to_play = card_play_input(player_turn, visualise=False)
+                    if card_to_beat == card_to_play:
+                        print("Cannot play same card twice")
+                    else:
+                        break
 
-                card_to_play = card_play_input(player_turn)
+                player_turn.remove_cards([card_to_beat])
                 player_turn.remove_cards([card_to_play])
+
+                self.card_stack.append(card_to_beat)
                 self.card_stack.append(card_to_play)
+
+            # Remove player from playing trick if he has no more cards
+            if not player_turn.hand:
+                self.player_cycle.remove(player_turn)
+                print(f"{player_turn.name} won")
+
+            # End game when there is only one person left
+            if len(self.player_cycle.list) == 1:
+                self.main_game.players[player_turn.name].score += 1
+                print(f"{player_turn.name} lost the game")
+                break
+
+            if len(self.player_cycle.list) == 0:
+                print(f"Game was tied")
+                break
