@@ -93,7 +93,7 @@ class Vezimas:
 
 
 def check_play_validity(
-    card_stack: List[Card], card_to_beat: Card, player: Player
+    card_stack: List[Card], card_to_beat: Optional[Card], player: Player
 ) -> bool:
     """Checks if played card obeys the game rules
     Args:
@@ -101,8 +101,10 @@ def check_play_validity(
         card_to_beat: card played to beat the stack
         player: player that is making the play
 
-    Returns: True if play is correct, False otherwise
+    Returns: True if play is correct (or no card provided), False otherwise
     """
+    if not card_to_beat:
+        return True
     last_card = card_stack[-1]
     next_player_suit = None
     next_player_to_play = player.next_player
@@ -153,6 +155,11 @@ class VezimasSubgame:
         self.player_cycle = MyCycle(_player_list)
         self.card_stack = []
 
+    def pickup_cards(self, player: Player):
+        """Method for picking up cards and resetting card stack"""
+        player.add_cards(self.card_stack)
+        self.card_stack = []
+
     def start_game(self):
         """Method for starting the trick of Vezimas"""
 
@@ -160,27 +167,42 @@ class VezimasSubgame:
             os.system("cls")
             print(f"{player_turn.name} select card(s) to play:")
 
-            # If card stack is empty or single card in hand play only one card
-            if not self.card_stack or len(player_turn.hand) == 1:
-                card_to_play_first = card_play_input(player_turn)
+            # If card stack is empty play one card
+            if not self.card_stack:
+                while True:
+                    card_to_play_first = card_play_input(player_turn, self.card_stack)
+                    if card_to_play_first:
+                        break
+                    print("Cannot pick up empty stack")
 
                 player_turn.remove_cards([card_to_play_first])
                 self.card_stack.append(card_to_play_first)
 
-            # If card stack is not empty play 2 cards
+            # If card stack is not empty play cards
             else:
                 while True:
-                    card_to_beat = card_play_input(player_turn)
-                    card_to_play = card_play_input(player_turn, visualise=False)
-                    if card_to_beat == card_to_play:
-                        print("Cannot play same card twice")
+                    card_to_beat = card_play_input(player_turn, self.card_stack)
                     if check_play_validity(self.card_stack, card_to_beat, player_turn):
                         break
+                if not card_to_beat:
+                    self.pickup_cards(player_turn)
+                    continue
+
 
                 player_turn.remove_cards([card_to_beat])
-                player_turn.remove_cards([card_to_play])
-
                 self.card_stack.append(card_to_beat)
+
+                if len(player_turn.hand) == 1:
+                    # If only one card in hand end turn
+                    break
+
+                card_to_play = card_play_input(player_turn, self.card_stack)
+                if card_to_beat is None or card_to_play is None:
+                    # Pickup cards
+                    self.pickup_cards(player_turn)
+                    break
+
+                player_turn.remove_cards([card_to_play])
                 self.card_stack.append(card_to_play)
 
             # Remove player from playing trick if he has no more cards

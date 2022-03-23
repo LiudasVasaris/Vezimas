@@ -1,5 +1,6 @@
 from typing import List, Any, Optional
 
+from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
 
 
@@ -80,40 +81,36 @@ class MyCycle:
         self.list[self.list.index(e)] = None
 
 
-def card_play_input(player: Player, visualise: bool = True) -> Card:
+def card_play_input(player: Player, card_stack: List[Card]) -> Card:
     """Visualises all cards and asks for a card to play
     Args:
         player: player whose cards to show
-        visualise: flag to set if cards should be printed
+        card_stack: card stack to visualise
 
     Returns:
         card selected to play"""
-    if visualise:
-        print(visualise_set_of_cards(player.hand))
+
+    print("-----------------------------------------------------------------------")
+    print(
+        f"Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}"
+    )
+    print(visualise_set_of_cards(player.hand))
+    print(
+        f"Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}"
+    )
+    print("-----------------------------------------------------------------------")
 
     card_idx = None
 
     while card_idx is None:
         try:
             card_idx = int(input("ID of card to play: "))
-            if card_idx not in list(range(len(player.hand))):
+            if card_idx not in list(range(len(player.hand) + 1)):
                 raise ValueError("Incorrect ID of card")
         except ValueError:
             card_idx = None
             print("Bad last input, Try again")
 
-    return player.hand[card_idx]
-
-
-# TODO: remove
-if __name__ == "__main__":
-    c = MyCycle([1, 2, 3])
-
-    a = 0
-    for i in c:
-        print(i)
-        a = a + 1
-        if a == 10:
-            c.remove(3)
-        if a == 20:
-            break
+    if card_idx:
+        return player.hand[card_idx - 1]
+    pass

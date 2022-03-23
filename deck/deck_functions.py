@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterable, List, Union
+from typing import Iterable, List
 
 from numpy import random
 
@@ -68,7 +68,7 @@ def visualise_set_of_cards(card_list: Iterable[Card]) -> str:
         String representation of a list of cards
     """
 
-    return str([f"{idx}: {card}" for idx, card in enumerate(card_list)])
+    return str([f"{idx+1}: {card}" for idx, card in enumerate(card_list)])
 
 
 ENCODED_CARDS = [Card(c) for c in itertools.product(PLAYING_CARDS, SUITS)]
