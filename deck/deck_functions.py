@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterable, List
+from typing import Iterable, List, Union
 
 from numpy import random
 
@@ -19,15 +19,6 @@ class Card:
 
     def __gt__(self, other: "Card"):
         return self.face > other.face
-=======
-def visualise_set_of_cards(
-    card_list: Iterable[card_type], sort_cards: bool = False
-) -> str:
-    """set of card encodings to string for visualisation
-    Args:
-        card_list: Iterable containing cards
-        sort_cards: Flag to choose if visualisation should be sorted
-        (hand cards are easier to look at sorted, while the card stack should not be sorted when represented)
 
     def __eq__(self, other: "Card"):
         return self.face == other.face and self.suit == other.suit
@@ -35,12 +26,8 @@ def visualise_set_of_cards(
     def __str__(self):
         return f"{PLAYING_CARDS[self.face]}{SUITS[self.suit]}"
 
-
     def __repr__(self):
         return f"Card({self.face},{self.suit})"
-    return str(
-        [f"{idx}: {card}" for idx, card in enumerate(card_list_to_viz)]
-    )
 
 
 class Deck:
@@ -72,7 +59,6 @@ class Deck:
         self.deck = self.init_deck.copy()
 
 
-
 def visualise_set_of_cards(card_list: Iterable[Card]) -> str:
     """set of card encodings to string for visualisation
     Args:
@@ -88,19 +74,3 @@ def visualise_set_of_cards(card_list: Iterable[Card]) -> str:
 ENCODED_CARDS = [Card(c) for c in itertools.product(PLAYING_CARDS, SUITS)]
 QUEEN_OF_SPADES = Card((12, 1))
 NINES = [Card(c) for c in [(9, 1), (9, 2), (9, 3), (9, 4)]]
-class Card:
-    """Data class of a card"""
-
-    def __init__(self, card_representation: tuple):
-        # Copy the list, to avoid mutating the wrong list by accident
-        self.face = card_representation[1]
-        self.suit = card_representation[0]
-
-    def __lt__(self, other: "Card"):
-        return self.face < other.face  # To get called on comparison using < operator.
-
-    def __gt__(self, other: "Card"):
-        return self.face > other.face  # To get called on comparison using > operator.
-
-    def __str__(self):
-        return f"{PLAYING_CARDS[self.face]}{SUITS[self.suit]}"
