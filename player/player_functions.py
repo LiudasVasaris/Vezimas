@@ -1,3 +1,4 @@
+import sys
 from typing import List, Any, Optional
 
 from deck.card_encoding import SUITS
@@ -27,11 +28,15 @@ class Player:
         self.hand = self.hand + list_of_cards
 
     def remove_cards(self, list_of_cards: List[Card]):
-        """Method to remove cards to the players hand
+        """Method to remove cards from the players hand
         Args:
             list_of_cards: list of tuple that represents a card to remove from players hand
         """
         [self.hand.remove(card) for card in list_of_cards if card in self.hand]
+
+    def remove_all_cards(self):
+        """Method to remove all cards from the players hand"""
+        self.hand = []
 
     def has_card(self, card: Card):
         """Method to check if a player has specified card in hand
@@ -90,16 +95,13 @@ def card_play_input(player: Player, card_stack: List[Card]) -> Card:
     Returns:
         card selected to play"""
 
-    print("-----------------------------------------------------------------------")
     print(
-        f"Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}"
+        f"""-----------------------------------------------------------------------------------
+Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
+{visualise_set_of_cards(player.hand)}
+Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
+-----------------------------------------------------------------------------------"""
     )
-    print(visualise_set_of_cards(player.hand))
-    print(
-        f"Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}"
-    )
-    print("-----------------------------------------------------------------------")
-
     card_idx = None
 
     while card_idx is None:
@@ -110,7 +112,8 @@ def card_play_input(player: Player, card_stack: List[Card]) -> Card:
         except ValueError:
             card_idx = None
             print("Bad last input, Try again")
-
+            
+    sys.stdout.write('\033[2K\033[1G')
     if card_idx:
         return player.hand[card_idx - 1]
     pass
