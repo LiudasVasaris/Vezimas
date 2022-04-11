@@ -1,4 +1,3 @@
-import os
 from typing import Optional, List
 
 from deck.card_encoding import SUITS
@@ -173,7 +172,6 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
-            os.system("cls")
             print(f"{player_turn.name} select card(s) to play:")
 
             # If card stack is empty play one card

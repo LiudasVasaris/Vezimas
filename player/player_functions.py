@@ -1,3 +1,4 @@
+import os
 import sys
 from typing import List, Any, Optional
 
@@ -108,12 +109,12 @@ Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
         try:
             card_idx = int(input("ID of card to play: "))
             if card_idx not in list(range(len(player.hand) + 1)):
-                raise ValueError("Incorrect ID of card")
+                print("Bad last input, Try again")
+
         except ValueError:
             card_idx = None
             print("Bad last input, Try again")
-            
-    sys.stdout.write('\033[2K\033[1G')
+    os.system("cls")
     if card_idx:
         return player.hand[card_idx - 1]
     pass
