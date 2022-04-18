@@ -116,7 +116,7 @@ Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
         except ValueError:
             card_idx = None
             print("Bad last input, Try again")
-    os.system("cls")
+
     if card_idx:
         return player.hand[card_idx - 1]
     pass
