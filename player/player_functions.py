@@ -78,6 +78,9 @@ class MyCycle:
             if not items_left:
                 return
 
+    def __len__(self):
+        return len([el for el in self.list if el])
+
     def remove(self, e: Any):
         """Method to remove element from list
         Args:
