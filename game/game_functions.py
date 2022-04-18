@@ -1,4 +1,3 @@
-import os
 from typing import Optional, List
 
 from deck.card_encoding import SUITS
@@ -80,7 +79,7 @@ class Vezimas:
         for player in self.players:
             player.starting_player = False
 
-    def get_starting_player(self):
+    def get_starting_player(self) -> Player:
         """Method for retrieving starting player"""
         for player in self.players:
             if player.starting_player:
@@ -90,6 +89,15 @@ class Vezimas:
     def sort_cards(self):
         """Method for sorting cards of each player"""
         [player.sort_cards() for player in self.players]
+
+    def check_worst_player(self) -> Player:
+        """Method for checking score of worst player"""
+        return max(self.players, key=lambda p: p.score)
+
+    def reset_cards(self):
+        """Method for resetting deck and player hands after the trick"""
+        self.deck = self.deck.reset_deck()
+        [player.remove_all_cards() for player in self.players]
 
 
 def check_play_validity(
@@ -164,7 +172,6 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
-            os.system("cls")
             print(f"{player_turn.name} select card(s) to play:")
 
             # If card stack is empty play one card
@@ -180,30 +187,33 @@ class VezimasSubgame:
 
             # If card stack is not empty play cards
             else:
+
                 while True:
                     card_to_beat = card_play_input(player_turn, self.card_stack)
                     if check_play_validity(self.card_stack, card_to_beat, player_turn):
                         break
-                if not card_to_beat:
-                    self.pickup_cards(player_turn)
-                    continue
 
+                while True:  # To allow premature end of code
 
-                player_turn.remove_cards([card_to_beat])
-                self.card_stack.append(card_to_beat)
+                    if not card_to_beat:
+                        # Pickup cards, end turn
+                        self.pickup_cards(player_turn)
+                        break
+                    player_turn.remove_cards([card_to_beat])
+                    self.card_stack.append(card_to_beat)
 
-                if len(player_turn.hand) == 1:
-                    # If only one card in hand end turn
+                    if len(player_turn.hand) == 0:
+                        # If no cards in hand, end turn
+                        break
+
+                    card_to_play = card_play_input(player_turn, self.card_stack)
+                    if not card_to_play:
+                        # Pickup cards, end turn
+                        self.pickup_cards(player_turn)
+                        break
+                    player_turn.remove_cards([card_to_play])
+                    self.card_stack.append(card_to_play)
                     break
-
-                card_to_play = card_play_input(player_turn, self.card_stack)
-                if card_to_beat is None or card_to_play is None:
-                    # Pickup cards
-                    self.pickup_cards(player_turn)
-                    break
-
-                player_turn.remove_cards([card_to_play])
-                self.card_stack.append(card_to_play)
 
             # Remove player from playing trick if he has no more cards
             if not player_turn.hand:
@@ -214,7 +224,7 @@ class VezimasSubgame:
             if len(self.player_cycle.list) == 1:
                 self.main_game.players[player_turn.name].score += 1
                 print(f"{player_turn.name} lost the game")
-                break
+                return player_turn
 
             if len(self.player_cycle.list) == 0:
                 print(f"Game was tied")
