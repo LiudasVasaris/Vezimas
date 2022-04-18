@@ -213,6 +213,7 @@ class VezimasSubgame:
                         break
                     player_turn.remove_cards([card_to_play])
                     self.card_stack.append(card_to_play)
+                    break
 
             # Remove player from playing trick if he has no more cards
             if not player_turn.hand:

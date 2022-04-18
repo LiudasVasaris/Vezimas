@@ -1,5 +1,4 @@
 import os
-import sys
 from typing import List, Any, Optional
 
 from deck.card_encoding import SUITS
