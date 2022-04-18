@@ -221,11 +221,11 @@ class VezimasSubgame:
                 print(f"{player_turn.name} won")
 
             # End game when there is only one person left
-            if len(self.player_cycle.list) == 1:
+            if len(self.player_cycle) == 1:
                 self.main_game.players[player_turn.name].score += 1
                 print(f"{player_turn.name} lost the game")
                 return player_turn
 
-            if len(self.player_cycle.list) == 0:
+            if len(self.player_cycle) == 1:
                 print(f"Game was tied")
                 break
