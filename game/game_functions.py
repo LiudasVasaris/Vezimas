@@ -3,6 +3,7 @@ from typing import Optional, List
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
 from player.player_functions import Player, MyCycle, card_play_input
+from collections import deque
 
 
 class Vezimas:
@@ -32,13 +33,19 @@ class Vezimas:
 
         self.players = [Player(name) for name in self.player_names]
 
-        # removes first element and adds it back again, essentially rotating list by one element
-        shifted_players_list = self.players.copy()
-        shifted_players_list.append(shifted_players_list.pop(0))
-
+    def set_player_reference(self):
+        """Method that sets player references"""
+        shifted_players_forward, shifted_players_back = (
+            deque(self.players.copy()),
+            deque(self.players.copy()),
+        )
+        shifted_players_forward.rotate(1)
+        shifted_players_back.rotate(-1)
         [
-            player.add_next_player(next_player)
-            for player, next_player in zip(self.players, shifted_players_list)
+            player.add_player_reference(prev_player, next_player)
+            for player, prev_player, next_player in zip(
+                self.players, shifted_players_back, shifted_players_forward
+            )
         ]
 
     def deal_cards(self):
@@ -124,15 +131,12 @@ def check_play_validity(
             next_player_to_play = next_player_to_play.next_player
 
     if last_card.suit == player.suit and card_to_beat.suit != player.suit:
-        print("Card suit is incorrect")
         return False
 
     if last_card.suit == player.suit and last_card > card_to_beat:
-        print("Card face value too low")
         return False
 
     if last_card.suit == next_player_suit and card_to_beat.suit != player.suit:
-        print("Card suit is incorrect")
         return False
 
     if last_card.suit != next_player_suit and last_card.suit != player.suit:
@@ -215,9 +219,11 @@ class VezimasSubgame:
                     self.card_stack.append(card_to_play)
                     break
 
-            # Remove player from playing trick if he has no more cards
+            # Remove player from playing trick if he has no more cards and adjust references
             if not player_turn.hand:
                 self.player_cycle.remove(player_turn)
+                player_turn.previous_player.next_player = player_turn.next_player
+                player_turn.next_player.previous_player = player_turn.previous_player
                 print(f"{player_turn.name} won")
 
             # End game when there is only one person left
@@ -226,6 +232,6 @@ class VezimasSubgame:
                 print(f"{player_turn.name} lost the game")
                 return player_turn
 
-            if len(self.player_cycle) == 1:
+            if len(self.player_cycle) == 0:
                 print(f"Game was tied")
                 break

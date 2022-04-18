@@ -5,6 +5,7 @@ def start_game():
     deck = Deck(ENCODED_CARDS)
 
     game = Vezimas(deck, 4)
+    game.set_player_reference()
     game.deal_cards()
     game.set_trumps()
 

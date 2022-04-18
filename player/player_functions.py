@@ -17,6 +17,7 @@ class Player:
         self.score: int = 0
         self.hand: List[Card] = []
         self.next_player: Optional[Player] = None
+        self.previous_player: Optional[Player] = None
         self.suit: Optional[int] = None
         self.starting_player: bool = False
 
@@ -50,12 +51,14 @@ class Player:
         return card in self.hand
 
     # Interesting case of Forward reference https://www.python.org/dev/peps/pep-0484/#forward-references
-    def add_next_player(self, player: "Player"):
-        """Method to add a reference to a player playing after current player
+    def add_player_reference(self, prev_player: "Player", next_player: "Player"):
+        """Method to add a reference to a player playing after and before current player
         Args:
-            player: Next player in line to play
+            prev_player: previous player in line to play
+            next_player: next player in line to play
         """
-        self.next_player = player
+        self.previous_player = prev_player
+        self.next_player = next_player
 
     def sort_cards(self):
         """Method for sorting player cards"""
