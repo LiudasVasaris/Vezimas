@@ -149,6 +149,26 @@ def check_play_validity(
     return True
 
 
+def get_available_play_card_idx(card_stack: List[Card], player: Player) -> List[int]:
+    """Returns idx(starting from 1) of cards in hand available for legal play and also 0 as available card pick up move
+    Args:
+        card_stack: stack of cards already played
+        player: player that is making the play
+
+    Returns: List of idx of legal play cards
+    """
+
+    is_card_legal_to_play = [
+        check_play_validity(card_stack, card, player) for card in player.hand
+    ]
+    legal_card_idx_to_play = [
+        int(a) * b
+        for a, b in zip(is_card_legal_to_play, range(1, len(player.hand) + 1))
+    ]
+
+    return [0] + legal_card_idx_to_play
+
+
 class VezimasSubgame:
     """Class of playing the trick/subgame of Vezimas"""
 
@@ -174,50 +194,54 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
-            print(f"{player_turn.name} select card(s) to play:")
 
             # If card stack is empty play one card
             if not self.card_stack:
-                while True:
-                    card_to_play_first = card_play_input(player_turn, self.card_stack)
-                    if card_to_play_first:
-                        break
-                    print("Cannot pick up empty stack")
+                card_to_play_first = card_play_input(
+                    player=player_turn,
+                    card_stack=self.card_stack,
+                    legal_idx_to_choose=range(1, len(player_turn.hand) + 1),
+                    play_no=1,
+                )
 
                 player_turn.remove_cards([card_to_play_first])
                 self.card_stack.append(card_to_play_first)
 
             # If card stack is not empty play cards
             else:
+                legal_card_idx_to_play = get_available_play_card_idx(
+                    self.card_stack, player_turn
+                )
+                card_to_beat = card_play_input(
+                    player=player_turn,
+                    card_stack=self.card_stack,
+                    legal_idx_to_choose=legal_card_idx_to_play,
+                    play_no=1,
+                )
 
-                while True:
-                    card_to_beat = card_play_input(player_turn, self.card_stack)
-                    if check_play_validity(self.card_stack, card_to_beat, player_turn):
-                        break
-
-                while True:  # To allow premature end of code
-
-                    if not card_to_beat:
-                        # Pickup cards, end turn
-                        self.pickup_cards(player_turn)
-                        player_turn.sort_cards()
-                        break
+                if card_to_beat:
                     player_turn.remove_cards([card_to_beat])
                     self.card_stack.append(card_to_beat)
 
-                    if len(player_turn.hand) == 0:
-                        # If no cards in hand, end turn
-                        break
-
-                    card_to_play = card_play_input(player_turn, self.card_stack)
-                    if not card_to_play:
-                        # Pickup cards, end turn
-                        self.pickup_cards(player_turn)
-                        player_turn.sort_cards()
-                        break
-                    player_turn.remove_cards([card_to_play])
-                    self.card_stack.append(card_to_play)
-                    break
+                    if player_turn.hand:
+                        # If still cards in hand, continue play
+                        card_to_play = card_play_input(
+                            player=player_turn,
+                            card_stack=self.card_stack,
+                            legal_idx_to_choose=range(len(player_turn.hand) + 1),
+                            play_no=2,
+                        )
+                        if card_to_play:
+                            player_turn.remove_cards([card_to_play])
+                            self.card_stack.append(card_to_play)
+                        else:
+                            # Pickup cards
+                            self.pickup_cards(player_turn)
+                            player_turn.sort_cards()
+                else:
+                    # Pickup cards
+                    self.pickup_cards(player_turn)
+                    player_turn.sort_cards()
 
             # Remove player from playing trick if he has no more cards and adjust references
             if not player_turn.hand:

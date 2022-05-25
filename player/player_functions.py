@@ -1,5 +1,5 @@
 import os
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Iterable
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
@@ -92,17 +92,21 @@ class MyCycle:
         self.list[self.list.index(e)] = None
 
 
-def card_play_input(player: Player, card_stack: List[Card]) -> Card:
+def card_play_input(player: Player, card_stack: List[Card], legal_idx_to_choose: Iterable[int], play_no: int) -> Card:
     """Visualises all cards and asks for a card to play
     Args:
         player: player whose cards to show
         card_stack: card stack to visualise
+        legal_idx_to_choose: available idx of card to play from hand (or 0 to pick up)
+        play_no: which card is player currently playing
 
     Returns:
         card selected to play"""
 
+    os.system("cls")
     print(
-        f"""-----------------------------------------------------------------------------------
+        f"""Player {player.name} to {play_no}{f"st" if play_no==1 else "nd"} play card
+-----------------------------------------------------------------------------------
 Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
 {visualise_set_of_cards(player.hand)}
 Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
@@ -113,12 +117,12 @@ Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
     while card_idx is None:
         try:
             card_idx = int(input("ID of card to play: "))
-            if card_idx not in list(range(len(player.hand) + 1)):
-                print("Bad last input, Try again")
+            if card_idx not in legal_idx_to_choose:
+                raise ValueError
 
         except ValueError:
-            card_idx = None
             print("Bad last input, Try again")
+            card_idx = None
 
     if card_idx:
         return player.hand[card_idx - 1]
