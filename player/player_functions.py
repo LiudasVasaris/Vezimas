@@ -105,7 +105,7 @@ def card_play_input(player: Player, card_stack: List[Card], legal_idx_to_choose:
 
     os.system("cls")
     print(
-        f"""Player {player.name} to {play_no}{f"st" if play_no==1 else "nd"} play card
+        f"""Player {player.name} to play {play_no}{f"st" if play_no==1 else "nd"} card
 -----------------------------------------------------------------------------------
 Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
 {visualise_set_of_cards(player.hand)}
