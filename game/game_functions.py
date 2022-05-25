@@ -142,10 +142,8 @@ def check_play_validity(
     if last_card.suit != next_player_suit and last_card.suit != player.suit:
         if card_to_beat.suit != player.suit:
             if card_to_beat.suit != last_card.suit:
-                print("Card suit is incorrect")
                 return False
             if last_card > card_to_beat:
-                print("Card face value too low")
                 return False
 
     return True
@@ -202,6 +200,7 @@ class VezimasSubgame:
                     if not card_to_beat:
                         # Pickup cards, end turn
                         self.pickup_cards(player_turn)
+                        player_turn.sort_cards()
                         break
                     player_turn.remove_cards([card_to_beat])
                     self.card_stack.append(card_to_beat)
@@ -214,6 +213,7 @@ class VezimasSubgame:
                     if not card_to_play:
                         # Pickup cards, end turn
                         self.pickup_cards(player_turn)
+                        player_turn.sort_cards()
                         break
                     player_turn.remove_cards([card_to_play])
                     self.card_stack.append(card_to_play)
