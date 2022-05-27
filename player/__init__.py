@@ -1,1 +1,1 @@
-"""Module player class and methods"""
+"""Module player and bot class and methods"""

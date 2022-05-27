@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
+from player.bot_classes import BaseBotClass
 from player.player_functions import Player, MyCycle, card_play_input
 from collections import deque
 
@@ -11,27 +12,35 @@ class Vezimas:
     Args:
         deck_of_cards: deck to be used for the game
         player_count: number of players that will start the game
-        player_names: (Optional) provide names for players, otherwise they will be numbered"""
+        player_names: (Optional) provide names for players, otherwise they will be numbered
+        include_bots: flag if bots should be included in game
+        bot_level: bot class for bots to play as
+    """
 
     def __init__(
         self,
         deck_of_cards: Deck,
         player_count: int,
+        include_bots: bool,
+        bot_level: BaseBotClass,
         player_names: Optional[List[str]] = None,
     ):
         self.deck = deck_of_cards
         self.player_count = player_count
+        self.include_bots = include_bots
+        self.bot_level = bot_level
 
         if player_names and player_count != len(player_names):
             raise ValueError(
                 f"Incorrect number of names provided, expected {player_count}, got {len(player_names)}"
             )
 
-        self.player_names = player_names or [
-            f"Player {i}" for i in range(0, player_count)
+        self.player_names = player_names or [f"Player {i}" for i in range(player_count)]
+        self.bot_list = [False] + [True] * (player_count - 1)
+        self.players = [
+            Player(name, bot_flag, self.bot_level)
+            for name, bot_flag in zip(self.player_names, self.bot_list)
         ]
-
-        self.players = [Player(name) for name in self.player_names]
 
     def set_player_reference(self):
         """Method that sets player references"""
@@ -149,24 +158,20 @@ def check_play_validity(
     return True
 
 
-def get_available_play_card_idx(card_stack: List[Card], player: Player) -> List[int]:
-    """Returns idx(starting from 1) of cards in hand available for legal play and also 0 as available card pick up move
+def get_available_play_card(card_stack: List[Card], player: Player) -> List[Card]:
+    """Returns list of cards in hand available for legal play
     Args:
         card_stack: stack of cards already played
         player: player that is making the play
 
-    Returns: List of idx of legal play cards
+    Returns: List of legal play cards
     """
 
-    is_card_legal_to_play = [
-        check_play_validity(card_stack, card, player) for card in player.hand
-    ]
     legal_card_idx_to_play = [
-        int(a) * b
-        for a, b in zip(is_card_legal_to_play, range(1, len(player.hand) + 1))
+        card for card in player.hand if check_play_validity(card_stack, card, player)
     ]
 
-    return [0] + legal_card_idx_to_play
+    return legal_card_idx_to_play
 
 
 class VezimasSubgame:
@@ -200,8 +205,9 @@ class VezimasSubgame:
                 card_to_play_first = card_play_input(
                     player=player_turn,
                     card_stack=self.card_stack,
-                    legal_idx_to_choose=range(1, len(player_turn.hand) + 1),
+                    legal_cards_to_play=player_turn.hand,
                     play_no=1,
+                    allow_pickup=False,
                 )
 
                 player_turn.remove_cards([card_to_play_first])
@@ -209,13 +215,13 @@ class VezimasSubgame:
 
             # If card stack is not empty play cards
             else:
-                legal_card_idx_to_play = get_available_play_card_idx(
+                legal_cards_to_play = get_available_play_card(
                     self.card_stack, player_turn
                 )
                 card_to_beat = card_play_input(
                     player=player_turn,
                     card_stack=self.card_stack,
-                    legal_idx_to_choose=legal_card_idx_to_play,
+                    legal_cards_to_play=legal_cards_to_play,
                     play_no=1,
                 )
 
@@ -228,7 +234,7 @@ class VezimasSubgame:
                         card_to_play = card_play_input(
                             player=player_turn,
                             card_stack=self.card_stack,
-                            legal_idx_to_choose=range(len(player_turn.hand) + 1),
+                            legal_cards_to_play=player_turn.hand,
                             play_no=2,
                         )
                         if card_to_play:
