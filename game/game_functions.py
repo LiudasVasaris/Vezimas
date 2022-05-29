@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
-from player.bot_classes import BaseBotClass
+from player.bot_classes import PlayerType
 from player.player_functions import Player, MyCycle, card_play_input
 from collections import deque
 
@@ -22,7 +22,7 @@ class Vezimas:
         deck_of_cards: Deck,
         player_count: int,
         include_bots: bool,
-        bot_level: BaseBotClass,
+        bot_level: PlayerType,
         player_names: Optional[List[str]] = None,
     ):
         self.deck = deck_of_cards

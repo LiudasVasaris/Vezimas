@@ -3,7 +3,7 @@ from typing import List, Any, Optional, Iterable
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
-from player.bot_classes import BaseBotClass
+from player.bot_classes import PlayerType
 
 
 class Player:
@@ -12,10 +12,10 @@ class Player:
         name: name of the player
     """
 
-    def __init__(self, name: str, is_bot: bool, bot_class: BaseBotClass = None):
+    def __init__(self, name: str, is_bot: bool, bot_class: PlayerType = None):
         self.name: str = name
         self.is_bot: bool = is_bot
-        self.bot: Optional[BaseBotClass] = bot_class
+        self.bot: Optional[PlayerType] = bot_class
 
         self.score: int = 0
         self.hand: List[Card] = []
