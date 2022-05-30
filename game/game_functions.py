@@ -2,8 +2,7 @@ from typing import Optional, List
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
-from player.bot_classes import PlayerType
-from player.player_functions import Player, MyCycle, card_play_input
+from player.player_functions import Player, MyCycle, PlayerType
 from collections import deque
 
 
@@ -202,10 +201,10 @@ class VezimasSubgame:
 
             # If card stack is empty play one card
             if not self.card_stack:
-                card_to_play_first = card_play_input(
+                card_to_play_first = player_turn.player_type.select_card_to_play(
+                    legal_cards_to_play=player_turn.hand,
                     player=player_turn,
                     card_stack=self.card_stack,
-                    legal_cards_to_play=player_turn.hand,
                     play_no=1,
                     allow_pickup=False,
                 )
@@ -218,10 +217,10 @@ class VezimasSubgame:
                 legal_cards_to_play = get_available_play_card(
                     self.card_stack, player_turn
                 )
-                card_to_beat = card_play_input(
+                card_to_beat = player_turn.player_type.select_card_to_play(
+                    legal_cards_to_play=legal_cards_to_play,
                     player=player_turn,
                     card_stack=self.card_stack,
-                    legal_cards_to_play=legal_cards_to_play,
                     play_no=1,
                 )
 
@@ -231,10 +230,10 @@ class VezimasSubgame:
 
                     if player_turn.hand:
                         # If still cards in hand, continue play
-                        card_to_play = card_play_input(
+                        card_to_play = player_turn.player_type.select_card_to_play(
+                            legal_cards_to_play=legal_cards_to_play,
                             player=player_turn,
                             card_stack=self.card_stack,
-                            legal_cards_to_play=player_turn.hand,
                             play_no=2,
                         )
                         if card_to_play:

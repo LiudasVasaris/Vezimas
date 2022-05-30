@@ -1,6 +1,6 @@
 from deck.deck_functions import Deck, ENCODED_CARDS
 from game.game_functions import Vezimas, VezimasSubgame
-from player.bot_classes import RandomBot
+from player.player_functions import RandomBot
 
 
 def start_game():
