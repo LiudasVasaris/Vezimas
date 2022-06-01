@@ -52,7 +52,7 @@ class HumanInput(PlayerType):
         Returns:
             Card to beat with or None
         """
-        return self.card_play_input(legal_cards_to_play=list_of_cards, **kwargs)
+        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
 
     def select_card_to_play(
         self, list_of_cards: CardChoice, **kwargs
@@ -64,11 +64,11 @@ class HumanInput(PlayerType):
         Returns:
             Card to play or None
         """
-        return self.card_play_input(legal_cards_to_play=list_of_cards, **kwargs)
+        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
 
     @staticmethod
     def card_play_input(
-        legal_cards_to_play: Iterable[Card],
+        list_of_cards: Iterable[Card],
         player: "Player",
         card_stack: CardChoice,
         play_no: int,
@@ -76,9 +76,9 @@ class HumanInput(PlayerType):
     ) -> Optional[Card]:
         """Visualises all cards and asks for a card to play
         Args:
+            list_of_cards: available cards to play from hand
             player: player whose cards to show
             card_stack: card stack to visualise
-            legal_cards_to_play: available cards to play from hand
             play_no: which card is player currently playing
             allow_pickup: allow pickup of cards flag
 
@@ -96,9 +96,7 @@ class HumanInput(PlayerType):
         )
         card_idx = None
         legal_idx_to_choose = [
-            idx + 1
-            for idx, card in enumerate(player.hand)
-            if card in legal_cards_to_play
+            idx + 1 for idx, card in enumerate(player.hand) if card in list_of_cards
         ]
 
         while card_idx is None:
@@ -149,11 +147,11 @@ class Player:
     """Represents player for the game, containing his name, score and current hand
     Args:
         name: name of the player
+        player_type: card input type class
     """
 
-    def __init__(self, name: str, is_bot: bool, player_type: PlayerType = HumanInput):
+    def __init__(self, name: str, player_type: PlayerType = HumanInput):
         self.name: str = name
-        self.is_bot: bool = is_bot
         self.player_type: Optional[PlayerType] = player_type
 
         self.score: int = 0

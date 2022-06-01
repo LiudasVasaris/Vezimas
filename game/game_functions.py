@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
-from player.player_functions import Player, MyCycle, PlayerType
+from player.player_functions import Player, MyCycle, PlayerType, HumanInput
 from collections import deque
 
 
@@ -12,7 +12,7 @@ class Vezimas:
         deck_of_cards: deck to be used for the game
         player_count: number of players that will start the game
         player_names: (Optional) provide names for players, otherwise they will be numbered
-        include_bots: flag if bots should be included in game
+        bot_count: number of bots to include
         bot_level: bot class for bots to play as
     """
 
@@ -20,24 +20,31 @@ class Vezimas:
         self,
         deck_of_cards: Deck,
         player_count: int,
-        include_bots: bool,
+        bot_count: int,
         bot_level: PlayerType,
         player_names: Optional[List[str]] = None,
     ):
         self.deck = deck_of_cards
         self.player_count = player_count
-        self.include_bots = include_bots
+        self.bot_count = bot_count
         self.bot_level = bot_level
+
+        self.human_count = player_count - bot_count
 
         if player_names and player_count != len(player_names):
             raise ValueError(
                 f"Incorrect number of names provided, expected {player_count}, got {len(player_names)}"
             )
+        if self.human_count < 0:
+            raise ValueError(
+                f"Incorrect number bots provided, expected max {player_count}, got {bot_count}"
+            )
 
         self.player_names = player_names or [f"Player {i}" for i in range(player_count)]
-        self.bot_list = [False] + [True] * (player_count - 1)
+        self.bot_list = [False] * self.human_count + [True] * self.bot_count
+
         self.players = [
-            Player(name, bot_flag, self.bot_level)
+            Player(name, self.bot_level if bot_flag else HumanInput())
             for name, bot_flag in zip(self.player_names, self.bot_list)
         ]
 
@@ -198,11 +205,11 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         for player_turn in self.player_cycle:
-
             # If card stack is empty play one card
+
             if not self.card_stack:
                 card_to_play_first = player_turn.player_type.select_card_to_play(
-                    legal_cards_to_play=player_turn.hand,
+                    list_of_cards=player_turn.hand,
                     player=player_turn,
                     card_stack=self.card_stack,
                     play_no=1,
@@ -218,7 +225,7 @@ class VezimasSubgame:
                     self.card_stack, player_turn
                 )
                 card_to_beat = player_turn.player_type.select_card_to_play(
-                    legal_cards_to_play=legal_cards_to_play,
+                    list_of_cards=legal_cards_to_play,
                     player=player_turn,
                     card_stack=self.card_stack,
                     play_no=1,
@@ -231,7 +238,7 @@ class VezimasSubgame:
                     if player_turn.hand:
                         # If still cards in hand, continue play
                         card_to_play = player_turn.player_type.select_card_to_play(
-                            legal_cards_to_play=legal_cards_to_play,
+                            list_of_cards=legal_cards_to_play,
                             player=player_turn,
                             card_stack=self.card_stack,
                             play_no=2,
