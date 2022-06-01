@@ -1,18 +1,158 @@
 import os
-from typing import List, Any, Optional
+import random
+from abc import ABC, abstractmethod
+from typing import List, Any, Optional, Iterable
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
+
+CardChoice = List[Optional[Card]]
+
+
+class PlayerType(ABC):
+    """Abstract class for representation of player with ability to make choices in game"""
+
+    @abstractmethod
+    def select_card_to_beat(
+        self, list_of_cards: CardChoice, **kwargs
+    ) -> Optional[Card]:
+        """Method for selecting a card to beat
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to beat with or None
+        """
+        raise NotImplemented
+
+    @abstractmethod
+    def select_card_to_play(
+        self, list_of_cards: CardChoice, **kwargs
+    ) -> Optional[Card]:
+        """Method for selecting a card to play
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to play or None
+        """
+        raise NotImplemented
+
+
+class HumanInput(PlayerType):
+    """Human player for the game that asks for input to play card"""
+
+    def select_card_to_beat(
+        self, list_of_cards: CardChoice, **kwargs
+    ) -> Optional[Card]:
+        """Selects a card to beat with randomly
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to beat with or None
+        """
+        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
+
+    def select_card_to_play(
+        self, list_of_cards: CardChoice, **kwargs
+    ) -> Optional[Card]:
+        """Selects a card to play randomly
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to play or None
+        """
+        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
+
+    @staticmethod
+    def card_play_input(
+        list_of_cards: Iterable[Card],
+        player: "Player",
+        card_stack: CardChoice,
+        play_no: int,
+        allow_pickup: bool = True,
+    ) -> Optional[Card]:
+        """Visualises all cards and asks for a card to play
+        Args:
+            list_of_cards: available cards to play from hand
+            player: player whose cards to show
+            card_stack: card stack to visualise
+            play_no: which card is player currently playing
+            allow_pickup: allow pickup of cards flag
+
+        Returns:
+            card selected to play"""
+
+        os.system("cls")
+        print(
+            f"""Player {player.name} to play {play_no}{f"st" if play_no == 1 else "nd"} card
+    -----------------------------------------------------------------------------------
+    Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
+    {visualise_set_of_cards(player.hand)}
+    Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
+    -----------------------------------------------------------------------------------"""
+        )
+        card_idx = None
+        legal_idx_to_choose = [
+            idx + 1 for idx, card in enumerate(player.hand) if card in list_of_cards
+        ]
+
+        while card_idx is None:
+            try:
+                card_idx = int(input("ID of card to play: "))
+                if card_idx not in legal_idx_to_choose + [0 if allow_pickup else None]:
+                    raise ValueError
+
+            except ValueError:
+                print("Bad last input, Try again")
+                card_idx = None
+
+        if card_idx:
+            return player.hand[card_idx - 1]
+        pass
+
+
+class RandomBot(PlayerType):
+    """Bot player for the game that plays random cards"""
+
+    def select_card_to_beat(
+        self, list_of_cards: List[Optional[Card]], **kwargs
+    ) -> Optional[Card]:
+        """Selects a card to beat with randomly
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to beat with or None
+        """
+
+        return random.choice(list_of_cards + [None])
+
+    def select_card_to_play(
+        self, list_of_cards: List[Optional[Card]], **kwargs
+    ) -> Card:
+        """Selects a card to play randomly
+        Args:
+            list_of_cards: list of card to chose from
+
+        Returns:
+            Card to play or None
+        """
+        return random.choice(list_of_cards + [None])
 
 
 class Player:
     """Represents player for the game, containing his name, score and current hand
     Args:
         name: name of the player
+        player_type: card input type class
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, player_type: PlayerType = HumanInput):
         self.name: str = name
+        self.player_type: Optional[PlayerType] = player_type
 
         self.score: int = 0
         self.hand: List[Card] = []
@@ -90,36 +230,3 @@ class MyCycle:
             e: element to remove from list
         """
         self.list[self.list.index(e)] = None
-
-
-def card_play_input(player: Player, card_stack: List[Card]) -> Card:
-    """Visualises all cards and asks for a card to play
-    Args:
-        player: player whose cards to show
-        card_stack: card stack to visualise
-
-    Returns:
-        card selected to play"""
-
-    print(
-        f"""-----------------------------------------------------------------------------------
-Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
-{visualise_set_of_cards(player.hand)}
-Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
------------------------------------------------------------------------------------"""
-    )
-    card_idx = None
-
-    while card_idx is None:
-        try:
-            card_idx = int(input("ID of card to play: "))
-            if card_idx not in list(range(len(player.hand) + 1)):
-                print("Bad last input, Try again")
-
-        except ValueError:
-            card_idx = None
-            print("Bad last input, Try again")
-
-    if card_idx:
-        return player.hand[card_idx - 1]
-    pass
