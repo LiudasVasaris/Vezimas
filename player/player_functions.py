@@ -72,6 +72,7 @@ class HumanInput(PlayerType):
         player: "Player",
         card_stack: CardChoice,
         play_no: int,
+        play_history: Optional[List[str]] = None,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Visualises all cards and asks for a card to play
@@ -80,6 +81,7 @@ class HumanInput(PlayerType):
             player: player whose cards to show
             card_stack: card stack to visualise
             play_no: which card is player currently playing
+            play_history: history of moves in the game
             allow_pickup: allow pickup of cards flag
 
         Returns:
@@ -94,6 +96,10 @@ class HumanInput(PlayerType):
     Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
     -----------------------------------------------------------------------------------"""
         )
+        if play_history:
+            print("".join(play_history))
+            print("-----------------------------------------------------------------------------------")
+
         card_idx = None
         legal_idx_to_choose = [
             idx + 1 for idx, card in enumerate(player.hand) if card in list_of_cards
