@@ -6,7 +6,7 @@ from player.player_functions import RandomBot
 def start_game():
     deck = Deck(ENCODED_CARDS)
     bot_level = RandomBot()
-    game = Vezimas(deck_of_cards=deck, player_count=4, bot_count=3, bot_level=bot_level)
+    game = Vezimas(deck_of_cards=deck, player_count=4, bot_count=4, bot_level=bot_level)
     game.set_player_reference()
     game.deal_cards()
     game.set_trumps()

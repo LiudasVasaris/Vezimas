@@ -243,3 +243,8 @@ class MyCycle:
             e: element to remove from list
         """
         self.list[self.list.index(e)] = None
+
+    def elements(self):
+        """Method to return list of elements still in cycle
+        """
+        return [el for el in self.list if el]
