@@ -208,13 +208,14 @@ class VezimasSubgame:
         for player_turn in self.player_cycle:
             # If card stack is empty play one card
             self.game_log.append("\n")
-            self.game_log.append(f"{player_turn.name}: ")
+            self.game_log.append(f"{player_turn.name}{SUITS[player_turn.suit]}: ")
 
             if not self.card_stack:
                 card_to_play_first = player_turn.player_type.select_card_to_play(
                     list_of_cards=player_turn.hand,
                     player=player_turn,
                     card_stack=self.card_stack,
+                    play_history=self.game_log,
                     play_no=1,
                     allow_pickup=False,
                 )
@@ -256,12 +257,12 @@ class VezimasSubgame:
                             self.game_log.append(f"2nd card: {card_to_play}")
                         else:
                             # Pickup cards
-                            self.game_log.append(f"Pickup cards {len(self.card_stack)}")
+                            self.game_log.append(f"Pickup cards({len(self.card_stack)})")
                             self.pickup_cards(player_turn)
                             player_turn.sort_cards()
                 else:
                     # Pickup cards
-                    self.game_log.append(f"Pickup cards {len(self.card_stack)}")
+                    self.game_log.append(f"Pickup cards({len(self.card_stack)})")
                     self.pickup_cards(player_turn)
                     player_turn.sort_cards()
 

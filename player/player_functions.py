@@ -88,22 +88,27 @@ class HumanInput(PlayerType):
             card selected to play"""
 
         os.system("cls")
-        print(
-            f"""Player {player.name} to play {play_no}{f"st" if play_no == 1 else "nd"} card
-    -----------------------------------------------------------------------------------
-    Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
-    {visualise_set_of_cards(player.hand)}
-    Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
-    -----------------------------------------------------------------------------------"""
-        )
         if play_history:
-            print("".join(play_history))
-            print("-----------------------------------------------------------------------------------")
+            print(
+                f"""Play history:
+        {"".join(play_history)}"""
+            )
+            print(
+                "-----------------------------------------------------------------------------------"
+            )
 
         card_idx = None
         legal_idx_to_choose = [
             idx + 1 for idx, card in enumerate(player.hand) if card in list_of_cards
         ]
+        print(
+            f"""Player {player.name} to play {play_no}{f"st" if play_no == 1 else "nd"} card
+        -----------------------------------------------------------------------------------
+        Select 0 to pickup cards, or ID of card to play. Your suit: {SUITS[player.suit]}, next player suit: {SUITS[player.next_player.suit]}
+        {visualise_set_of_cards(player.hand)}
+        Card stack: {[str(c) for c in card_stack[-3:]]}, total stack {len(card_stack)}
+        -----------------------------------------------------------------------------------"""
+        )
 
         while card_idx is None:
             try:
@@ -146,6 +151,8 @@ class RandomBot(PlayerType):
         Returns:
             Card to play or None
         """
+        if kwargs.get("allow_pickup") is False:
+            return random.choice(list_of_cards)
         return random.choice(list_of_cards + [None])
 
 
