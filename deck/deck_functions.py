@@ -10,7 +10,6 @@ class Card:
     """Data class of a card"""
 
     def __init__(self, card_representation: tuple):
-        # Copy the list, to avoid mutating the wrong list by accident
         self.face = card_representation[0]
         self.suit = card_representation[1]
 
