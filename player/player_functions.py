@@ -169,8 +169,12 @@ class Player:
 
         self.score: int = 0
         self.hand: List[Card] = []
+
+        self.next_player_init: Optional[Player] = None
+        self.previous_player_init: Optional[Player] = None
         self.next_player: Optional[Player] = None
         self.previous_player: Optional[Player] = None
+
         self.suit: Optional[int] = None
         self.starting_player: bool = False
 
@@ -210,8 +214,21 @@ class Player:
             prev_player: previous player in line to play
             next_player: next player in line to play
         """
+        self.previous_player_init = prev_player
+        self.next_player_init = next_player
+
         self.previous_player = prev_player
         self.next_player = next_player
+
+    def reset_player_reference(self):
+        """Method to reset initial references to a player playing after and before current player
+        Args:
+        """
+        if (self.previous_player_init is None) or (self.next_player_init is None):
+            raise AttributeError(f"{self.name} references not initialized")
+
+        self.previous_player = self.previous_player_init
+        self.next_player = self.next_player_init
 
     def sort_cards(self):
         """Method for sorting player cards"""
@@ -245,6 +262,5 @@ class MyCycle:
         self.list[self.list.index(e)] = None
 
     def elements(self):
-        """Method to return list of elements still in cycle
-        """
+        """Method to return list of elements still in cycle"""
         return [el for el in self.list if el]

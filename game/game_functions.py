@@ -63,6 +63,11 @@ class Vezimas:
             )
         ]
 
+    def reset_player_reference(self):
+        """Method that resets player references to initial references"""
+        for player in self.players:
+            player.reset_player_reference()
+
     def deal_cards(self):
         """Method that shuffles and deals cards to the players"""
         cards_per_player = int(len(self.deck) / self.player_count)
