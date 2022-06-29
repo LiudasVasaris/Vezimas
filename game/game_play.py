@@ -4,15 +4,22 @@ from game.game_functions import Vezimas, VezimasSubgame
 from player.player_functions import RandomBot
 
 
-def start_game():
+def start_game(player_count=4, bot_count=3):
     deck = Deck(ENCODED_CARDS)
     bot_level = RandomBot()
-    game = Vezimas(deck_of_cards=deck, player_count=4, bot_count=3, bot_level=bot_level)
+    game = Vezimas(
+        deck_of_cards=deck,
+        player_count=player_count,
+        bot_count=bot_count,
+        bot_level=bot_level,
+    )
     game.set_player_reference()
     game.deal_cards()
     game.set_trumps()
 
-    while game.check_worst_player().score < 7:
+    while (game_no := game.check_worst_player().score) < 7:
+        print(f"Starting game {game_no}")
+        game.deal_cards()
         game.share_nines()
         game.sort_cards()
         trick = VezimasSubgame(game)
@@ -24,7 +31,9 @@ def start_game():
         game.reset_player_reference()
         game.reset_cards()
 
-    print({f"{player.name} {SUITS[player.suit]}": player.score for player in game.players})
+    print(
+        {f"{player.name} {SUITS[player.suit]}": player.score for player in game.players}
+    )
 
 
 if __name__ == "__main__":

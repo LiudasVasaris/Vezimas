@@ -285,7 +285,7 @@ class VezimasSubgame:
                 lost_player = self.player_cycle.elements()[0]
                 lost_player.score += 1
                 self.game_log.append(f"{lost_player.name} lost the game")
-                return player_turn
+                return lost_player
 
             if len(self.player_cycle) == 0:
                 self.game_log.append(f"Game was tied")
