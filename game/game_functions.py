@@ -63,6 +63,11 @@ class Vezimas:
             )
         ]
 
+    def reset_player_reference(self):
+        """Method that resets player references to initial references"""
+        for player in self.players:
+            player.reset_player_reference()
+
     def deal_cards(self):
         """Method that shuffles and deals cards to the players"""
         cards_per_player = int(len(self.deck) / self.player_count)
@@ -118,8 +123,8 @@ class Vezimas:
 
     def reset_cards(self):
         """Method for resetting deck and player hands after the trick"""
-        self.deck = self.deck.reset_deck()
         [player.remove_all_cards() for player in self.players]
+        self.deck.reset_deck()
 
 
 def check_play_validity(
@@ -257,7 +262,9 @@ class VezimasSubgame:
                             self.game_log.append(f"2nd card: {card_to_play}")
                         else:
                             # Pickup cards
-                            self.game_log.append(f"Pickup cards({len(self.card_stack)})")
+                            self.game_log.append(
+                                f"Pickup cards({len(self.card_stack)})"
+                            )
                             self.pickup_cards(player_turn)
                             player_turn.sort_cards()
                 else:
@@ -275,9 +282,10 @@ class VezimasSubgame:
 
             # End game when there is only one person left
             if len(self.player_cycle) == 1:
-                self.main_game.players[player_turn.name].score += 1
-                self.game_log.append(f"{player_turn.name} lost the game")
-                return player_turn
+                lost_player = self.player_cycle.elements()[0]
+                lost_player.score += 1
+                self.game_log.append(f"{lost_player.name} lost the game")
+                return lost_player
 
             if len(self.player_cycle) == 0:
                 self.game_log.append(f"Game was tied")
