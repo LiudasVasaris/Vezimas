@@ -234,7 +234,7 @@ class VezimasSubgame:
                 legal_cards_to_play = get_available_play_card(
                     self.card_stack, player_turn
                 )
-                card_to_beat = player_turn.player_type.select_card_to_play(
+                card_to_beat = player_turn.player_type.select_card_to_beat(
                     list_of_cards=legal_cards_to_play,
                     player=player_turn,
                     card_stack=self.card_stack,
