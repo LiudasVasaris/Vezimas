@@ -6,7 +6,7 @@ from typing import List, Any, Optional, Iterable
 from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
 
-CardChoice = List[Optional[Card]]
+OptionalCardList = List[Optional[Card]]
 
 
 class PlayerType(ABC):
@@ -14,11 +14,22 @@ class PlayerType(ABC):
 
     @abstractmethod
     def select_card_to_beat(
-        self, list_of_cards: CardChoice, **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Method for selecting a card to beat
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to beat with or None
@@ -27,11 +38,22 @@ class PlayerType(ABC):
 
     @abstractmethod
     def select_card_to_play(
-        self, list_of_cards: CardChoice, **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Method for selecting a card to play
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to play or None
@@ -43,34 +65,60 @@ class HumanInput(PlayerType):
     """Human player for the game that asks for input to play card"""
 
     def select_card_to_beat(
-        self, list_of_cards: CardChoice, **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Selects a card to beat with randomly
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to beat with or None
         """
-        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
+        return self.card_play_input(
+            list_of_cards, player, card_stack, play_no, play_history, allow_pickup
+        )
 
     def select_card_to_play(
-        self, list_of_cards: CardChoice, **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Selects a card to play randomly
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to play or None
         """
-        return self.card_play_input(list_of_cards=list_of_cards, **kwargs)
+        return self.card_play_input(
+            list_of_cards, player, card_stack, play_no, play_history, allow_pickup
+        )
 
     @staticmethod
     def card_play_input(
         list_of_cards: Iterable[Card],
         player: "Player",
-        card_stack: CardChoice,
+        card_stack: OptionalCardList,
         play_no: int,
         play_history: Optional[List[str]] = None,
         allow_pickup: bool = True,
@@ -129,11 +177,22 @@ class RandomBot(PlayerType):
     """Bot player for the game that plays random cards"""
 
     def select_card_to_beat(
-        self, list_of_cards: List[Optional[Card]], **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Optional[Card]:
         """Selects a card to beat with randomly
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to beat with or None
@@ -142,16 +201,27 @@ class RandomBot(PlayerType):
         return random.choice(list_of_cards + [None])
 
     def select_card_to_play(
-        self, list_of_cards: List[Optional[Card]], **kwargs
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        play_no: int,
+        allow_pickup: bool = True,
     ) -> Card:
         """Selects a card to play randomly
         Args:
             list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to play or None
         """
-        if kwargs.get("allow_pickup") is False:
+        if allow_pickup is False:
             return random.choice(list_of_cards)
         return random.choice(list_of_cards + [None])
 
