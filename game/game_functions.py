@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import Deck, Card, QUEEN_OF_SPADES, NINES
+from game.game_state import GameState
 from player.player_functions import Player, MyCycle, PlayerType, HumanInput
 from collections import deque
 
@@ -209,6 +210,11 @@ class VezimasSubgame:
 
     def start_game(self):
         """Method for starting the trick of Vezimas"""
+
+        public_game_state = GameState(
+            players=self.main_game.players, card_stack=[], card_to_beat=False
+        )
+        print(public_game_state)
 
         for player_turn in self.player_cycle:
             # If card stack is empty play one card
