@@ -237,6 +237,7 @@ class RandomBot(PlayerType):
         Returns:
             Card to play or None
         """
+
         if allow_pickup is False:
             return random.choice(list_of_cards)
         return random.choice(list_of_cards + [None])

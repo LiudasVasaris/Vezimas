@@ -1,5 +1,6 @@
 from functools import reduce
 from typing import List
+import copy
 
 from deck.deck_functions import Card, ENCODED_CARDS
 from player.player_functions import Player, OptionalCardList
@@ -28,9 +29,7 @@ class GameState:
         }
         self.play_state = {"card_stack": card_stack, "card_to_beat": card_to_beat}
 
-    def add_known_cards(
-        self, player: "Player", list_of_cards: List[Card]
-    ):
+    def add_known_cards(self, player: "Player", list_of_cards: List[Card]):
         """Marks cards as known in player hands"""
         self.player_state[player.name]["known_cards"] += list_of_cards
         self.player_state[player.name]["no_cards"] += len(list_of_cards)
@@ -55,6 +54,12 @@ class GameState:
     def adjust_card_to_beat(self, card_to_beat: bool):
         """Adjust card_to_beat flag"""
         self.play_state["card_to_beat"] = card_to_beat
+
+    def private_game_state(self, player: "Player"):
+        """Returns a copy of game state with private information of player observing the state"""
+        private_game_state = copy.deepcopy(self)
+        private_game_state.player_state[player.name]["known_cards"] = player.hand
+        return private_game_state
 
     def __repr__(self):
         known_cards = (
