@@ -212,31 +212,39 @@ class VezimasSubgame:
         """Method for starting the trick of Vezimas"""
 
         public_game_state = GameState(
-            players=self.main_game.players, card_stack=[], card_to_beat=False
+            players=self.main_game.players, card_stack=list(), card_to_beat=False
         )
-        print(public_game_state)
 
         for player_turn in self.player_cycle:
-            # If card stack is empty play one card
             self.game_log.append("\n")
             self.game_log.append(f"{player_turn.name}{SUITS[player_turn.suit]}: ")
 
+            # If card stack is empty play one card
             if not self.card_stack:
+                public_game_state.adjust_card_to_beat(False)
+
                 card_to_play_first = player_turn.player_type.select_card_to_play(
                     list_of_cards=player_turn.hand,
                     player=player_turn,
                     card_stack=self.card_stack,
                     play_history=self.game_log,
+                    game_state=public_game_state,
                     play_no=1,
                     allow_pickup=False,
                 )
 
                 player_turn.remove_cards([card_to_play_first])
                 self.card_stack.append(card_to_play_first)
+
                 self.game_log.append(f"1st card: {card_to_play_first} ")
+                public_game_state.remove_known_cards(
+                    player_turn, [card_to_play_first], self.card_stack
+                )
 
             # If card stack is not empty play cards
             else:
+                public_game_state.adjust_card_to_beat(True)
+
                 legal_cards_to_play = get_available_play_card(
                     self.card_stack, player_turn
                 )
@@ -245,37 +253,55 @@ class VezimasSubgame:
                     player=player_turn,
                     card_stack=self.card_stack,
                     play_history=self.game_log,
+                    game_state=public_game_state,
                     play_no=1,
                 )
 
                 if card_to_beat:
                     player_turn.remove_cards([card_to_beat])
                     self.card_stack.append(card_to_beat)
+
                     self.game_log.append(f"1st card: {card_to_beat} ")
+                    public_game_state.remove_known_cards(
+                        player_turn, [card_to_beat], self.card_stack
+                    )
 
                     if player_turn.hand:
                         # If still cards in hand, continue play
+                        public_game_state.adjust_card_to_beat(False)
+
                         card_to_play = player_turn.player_type.select_card_to_play(
                             list_of_cards=player_turn.hand,
                             player=player_turn,
                             card_stack=self.card_stack,
                             play_history=self.game_log,
+                            game_state=public_game_state,
                             play_no=2,
                         )
                         if card_to_play:
                             player_turn.remove_cards([card_to_play])
                             self.card_stack.append(card_to_play)
+
                             self.game_log.append(f"2nd card: {card_to_play}")
+                            public_game_state.remove_known_cards(
+                                player_turn, [card_to_play], self.card_stack
+                            )
                         else:
                             # Pickup cards
                             self.game_log.append(
                                 f"Pickup cards({len(self.card_stack)})"
                             )
+                            public_game_state.add_known_cards(
+                                player_turn, self.card_stack
+                            )
+
                             self.pickup_cards(player_turn)
                             player_turn.sort_cards()
                 else:
                     # Pickup cards
                     self.game_log.append(f"Pickup cards({len(self.card_stack)})")
+                    public_game_state.add_known_cards(player_turn, self.card_stack)
+
                     self.pickup_cards(player_turn)
                     player_turn.sort_cards()
 
@@ -284,7 +310,9 @@ class VezimasSubgame:
                 self.player_cycle.remove(player_turn)
                 player_turn.previous_player.next_player = player_turn.next_player
                 player_turn.next_player.previous_player = player_turn.previous_player
+
                 self.game_log.append(f"{player_turn.name} won")
+                public_game_state.remove_player(player_turn)
 
             # End game when there is only one person left
             if len(self.player_cycle) == 1:

@@ -28,18 +28,33 @@ class GameState:
         }
         self.play_state = {"card_stack": card_stack, "card_to_beat": card_to_beat}
 
-    def add_known_cards(self, list_of_cards: List[Card], player: "Player"):
+    def add_known_cards(
+        self, player: "Player", list_of_cards: List[Card]
+    ):
         """Marks cards as known in player hands"""
         self.player_state[player.name]["known_cards"] += list_of_cards
         self.player_state[player.name]["no_cards"] += len(list_of_cards)
+        self.play_state["card_stack"] = []
 
-    def remove_known_cards(self, list_of_cards: List[Card], player: "Player"):
+    def remove_known_cards(
+        self, player: "Player", list_of_cards: List[Card], card_stack: OptionalCardList
+    ):
         """Removes card as known in player hands"""
         [
             self.player_state[player.name]["known_cards"].remove(card)
             for card in list_of_cards
+            if card in self.player_state[player.name]["known_cards"]
         ]
         self.player_state[player.name]["no_cards"] -= len(list_of_cards)
+        self.play_state["card_stack"] = card_stack
+
+    def remove_player(self, player: "Player"):
+        """Marks player as inactive"""
+        self.player_state[player.name]["is_active"] = False
+
+    def adjust_card_to_beat(self, card_to_beat: bool):
+        """Adjust card_to_beat flag"""
+        self.play_state["card_to_beat"] = card_to_beat
 
     def __repr__(self):
         known_cards = (
