@@ -243,6 +243,67 @@ class RandomBot(PlayerType):
         return random.choice(list_of_cards + [None])
 
 
+class AdvancedBot(PlayerType):
+    """Bot player for the game that plays cards of maximum value"""
+
+    def evaluate_cards(self):
+        pass
+
+    def select_card_to_beat(
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        game_state: "GameState",
+        play_no: int,
+        allow_pickup: bool = True,
+    ) -> Optional[Card]:
+        """Selects a card to beat with randomly
+        Args:
+            list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            game_state: game state encoding
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
+
+        Returns:
+            Card to beat with or None
+        """
+
+        return random.choice(list_of_cards + [None])
+
+    def select_card_to_play(
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        game_state: "GameState",
+        play_no: int,
+        allow_pickup: bool = True,
+    ) -> Card:
+        """Selects a card to play randomly
+        Args:
+            list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            game_state: game state encoding
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
+
+        Returns:
+            Card to play or None
+        """
+
+        if allow_pickup is False:
+            return random.choice(list_of_cards)
+        return random.choice(list_of_cards + [None])
+
+
 class Player:
     """Represents player for the game, containing his name, score and current hand
     Args:
