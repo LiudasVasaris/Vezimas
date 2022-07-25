@@ -18,7 +18,7 @@ def start_game(player_count=4, bot_count=3):
     game.set_trumps()
 
     while (game_no := game.check_worst_player().score) < 7:
-        print(f"Starting game {game_no}")
+        print(f"Starting game {sum([p.score for p in  game.players])}")
         game.deal_cards()
         game.share_nines()
         game.sort_cards()
@@ -37,6 +37,6 @@ def start_game(player_count=4, bot_count=3):
 
 
 if __name__ == "__main__":
-    start_game()
+    start_game(player_count=4, bot_count=4)
 
 print("stop")

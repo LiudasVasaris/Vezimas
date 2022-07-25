@@ -2,9 +2,13 @@ import os
 import random
 from abc import ABC, abstractmethod
 from typing import List, Any, Optional, Iterable
+from typing import TYPE_CHECKING
 
 from deck.card_encoding import SUITS
 from deck.deck_functions import visualise_set_of_cards, Card
+
+if TYPE_CHECKING:
+    from game.game_state import GameState
 
 OptionalCardList = List[Optional[Card]]
 
@@ -19,6 +23,7 @@ class PlayerType(ABC):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
@@ -28,6 +33,7 @@ class PlayerType(ABC):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
@@ -43,6 +49,7 @@ class PlayerType(ABC):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
@@ -52,6 +59,7 @@ class PlayerType(ABC):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
@@ -70,6 +78,7 @@ class HumanInput(PlayerType):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
@@ -79,6 +88,7 @@ class HumanInput(PlayerType):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
@@ -95,6 +105,7 @@ class HumanInput(PlayerType):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
@@ -104,6 +115,7 @@ class HumanInput(PlayerType):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
@@ -182,6 +194,7 @@ class RandomBot(PlayerType):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Optional[Card]:
@@ -191,6 +204,7 @@ class RandomBot(PlayerType):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
@@ -206,6 +220,7 @@ class RandomBot(PlayerType):
         player: "Player",
         card_stack: OptionalCardList,
         play_history: List[str],
+        game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
     ) -> Card:
@@ -215,12 +230,14 @@ class RandomBot(PlayerType):
             player: player to make the move
             card_stack: cards on the table
             play_history: history of all moves
+            game_state: game state encoding
             play_no: placement of 1st or 2nd card (1,2)
             allow_pickup: flag if card pickup is a viable move
 
         Returns:
             Card to play or None
         """
+
         if allow_pickup is False:
             return random.choice(list_of_cards)
         return random.choice(list_of_cards + [None])
