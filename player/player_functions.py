@@ -246,7 +246,29 @@ class RandomBot(PlayerType):
 class AdvancedBot(PlayerType):
     """Bot player for the game that plays cards of maximum value"""
 
-    def evaluate_cards(self):
+    def evaluate_cards(
+        self,
+        list_of_cards: OptionalCardList,
+        player: "Player",
+        card_stack: OptionalCardList,
+        play_history: List[str],
+        game_state: "GameState",
+        play_no: int,
+        allow_pickup: bool = True,
+    ):
+        """Evaluates card value
+        Args:
+            list_of_cards: list of card to chose from
+            player: player to make the move
+            card_stack: cards on the table
+            play_history: history of all moves
+            game_state: game state encoding
+            play_no: placement of 1st or 2nd card (1,2)
+            allow_pickup: flag if card pickup is a viable move
+
+        Returns:
+            List of tuple (card, eval)
+        """
         pass
 
     def select_card_to_beat(
