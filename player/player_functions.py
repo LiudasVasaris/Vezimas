@@ -269,6 +269,19 @@ class AdvancedBot(PlayerType):
         Returns:
             List of tuple (card, eval)
         """
+        current_suit = player.suit
+        next_suit = player.next_player.suit
+        next_suit_2 = player.next_player.next_player.suit
+
+        if next_suit_2 == current_suit:
+            pass
+
+        else:
+            ranking = {current_suit: 30,
+                       next_suit: 20,
+                       next_suit_2: 10
+                       }
+
         pass
 
     def select_card_to_beat(
