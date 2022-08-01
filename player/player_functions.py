@@ -1,7 +1,7 @@
 import os
 import random
 from abc import ABC, abstractmethod
-from typing import List, Any, Optional, Iterable
+from typing import List, Any, Optional, Iterable, Tuple
 from typing import TYPE_CHECKING
 
 from deck.card_encoding import SUITS
@@ -246,43 +246,32 @@ class RandomBot(PlayerType):
 class AdvancedBot(PlayerType):
     """Bot player for the game that plays cards of maximum value"""
 
+    @staticmethod
     def evaluate_cards(
-        self,
-        list_of_cards: OptionalCardList,
-        player: "Player",
-        card_stack: OptionalCardList,
-        play_history: List[str],
-        game_state: "GameState",
-        play_no: int,
-        allow_pickup: bool = True,
-    ):
+        list_of_cards: OptionalCardList, player: "Player"
+    ) -> Optional[List[Tuple[Card, int]]]:
         """Evaluates card value
         Args:
             list_of_cards: list of card to chose from
             player: player to make the move
-            card_stack: cards on the table
-            play_history: history of all moves
-            game_state: game state encoding
-            play_no: placement of 1st or 2nd card (1,2)
-            allow_pickup: flag if card pickup is a viable move
 
         Returns:
             List of tuple (card, eval)
         """
-        current_suit = player.suit
+        if not list_of_cards:
+            return None
+
+        player_suit = player.suit
         next_suit = player.next_player.suit
         next_suit_2 = player.next_player.next_player.suit
 
-        if next_suit_2 == current_suit:
-            pass
+        ranking = {
+            next_suit_2: 10,
+            next_suit: 20,
+            player_suit: 30,  # overwrites if next_suit_2==current_suit
+        }
 
-        else:
-            ranking = {current_suit: 30,
-                       next_suit: 20,
-                       next_suit_2: 10
-                       }
-
-        pass
+        return [(card, ranking.get(card.suit, 0) + card.face) for card in list_of_cards]
 
     def select_card_to_beat(
         self,
@@ -308,7 +297,9 @@ class AdvancedBot(PlayerType):
             Card to beat with or None
         """
 
-        return random.choice(list_of_cards + [None])
+        evaluated_cards = self.evaluate_cards(list_of_cards, player)
+        # TODO: implement
+        pass
 
     def select_card_to_play(
         self,
@@ -334,9 +325,9 @@ class AdvancedBot(PlayerType):
             Card to play or None
         """
 
-        if allow_pickup is False:
-            return random.choice(list_of_cards)
-        return random.choice(list_of_cards + [None])
+        evaluated_cards = self.evaluate_cards(list_of_cards, player)
+        # TODO: implement
+        pass
 
 
 class Player:
