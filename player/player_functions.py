@@ -249,7 +249,7 @@ class AdvancedBot(PlayerType):
     @staticmethod
     def evaluate_cards(
         list_of_cards: OptionalCardList, player: "Player"
-    ) -> Optional[List[Tuple[Card, int]]]:
+    ) -> Optional[Card]:
         """Evaluates card value
         Args:
             list_of_cards: list of card to chose from
@@ -271,7 +271,11 @@ class AdvancedBot(PlayerType):
             player_suit: 30,  # overwrites if next_suit_2==current_suit
         }
 
-        return [(card, ranking.get(card.suit, 0) + card.face) for card in list_of_cards]
+        card_rankings = [
+            (card, ranking.get(card.suit, 0) + card.face) for card in list_of_cards
+        ]
+
+        return min(card_rankings, key=lambda x: x[1])[0]
 
     def select_card_to_beat(
         self,
@@ -297,9 +301,23 @@ class AdvancedBot(PlayerType):
             Card to beat with or None
         """
 
-        evaluated_cards = self.evaluate_cards(list_of_cards, player)
-        # TODO: implement
-        pass
+        evaluated_card = self.evaluate_cards(list_of_cards, player)
+        trump_cards = len(list(filter(lambda x: x.suit == player.suit, player.hand)))
+        trump_in_stack = len(list(filter(lambda x: x.suit == player.suit, card_stack)))
+        if not evaluated_card:
+            return None
+
+        if (
+            len(player.hand) >= 3
+            and trump_cards <= 1
+            and evaluated_card.suit == player.suit
+        ):  # prevent play with no trumps
+            return None
+
+        if trump_in_stack >= int(len(card_stack) / 2):  # take good stack
+            return None
+
+        return evaluated_card
 
     def select_card_to_play(
         self,
@@ -310,7 +328,7 @@ class AdvancedBot(PlayerType):
         game_state: "GameState",
         play_no: int,
         allow_pickup: bool = True,
-    ) -> Card:
+    ) -> Optional[Card]:
         """Selects a card to play randomly
         Args:
             list_of_cards: list of card to chose from
@@ -326,6 +344,7 @@ class AdvancedBot(PlayerType):
         """
 
         evaluated_cards = self.evaluate_cards(list_of_cards, player)
+
         # TODO: implement
         pass
 
