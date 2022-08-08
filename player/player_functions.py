@@ -1,7 +1,7 @@
 import os
 import random
 from abc import ABC, abstractmethod
-from typing import List, Any, Optional, Iterable, Tuple
+from typing import List, Any, Optional, Iterable
 from typing import TYPE_CHECKING
 
 from deck.card_encoding import SUITS
@@ -250,13 +250,13 @@ class AdvancedBot(PlayerType):
     def evaluate_cards(
         list_of_cards: OptionalCardList, player: "Player"
     ) -> Optional[Card]:
-        """Evaluates card value
+        """Evaluates card value and returns lowest value card
         Args:
             list_of_cards: list of card to chose from
             player: player to make the move
 
         Returns:
-            List of tuple (card, eval)
+            Card or none
         """
         if not list_of_cards:
             return None
@@ -304,6 +304,7 @@ class AdvancedBot(PlayerType):
         evaluated_card = self.evaluate_cards(list_of_cards, player)
         trump_cards = len(list(filter(lambda x: x.suit == player.suit, player.hand)))
         trump_in_stack = len(list(filter(lambda x: x.suit == player.suit, card_stack)))
+
         if not evaluated_card:
             return None
 
@@ -314,7 +315,9 @@ class AdvancedBot(PlayerType):
         ):  # prevent play with no trumps
             return None
 
-        if trump_in_stack >= int(len(card_stack) / 2):  # take good stack
+        if (
+            trump_in_stack >= int(len(card_stack) / 2) and len(card_stack) >= 3
+        ):  # take good stack
             return None
 
         return evaluated_card
@@ -345,8 +348,7 @@ class AdvancedBot(PlayerType):
 
         evaluated_cards = self.evaluate_cards(list_of_cards, player)
 
-        # TODO: implement
-        pass
+        return evaluated_cards
 
 
 class Player:
